@@ -240,7 +240,6 @@ public class UIDialogWindow implements UIComponent {
 
         int buttonX = x + 2;
         for (UIButton button : buttons) {
-            String buttonText = String.format("%-" + MIN_BUTTON_WIDTH + "s", button.text);
             int padding = (MIN_BUTTON_WIDTH - button.text.length()) / 2;
             String paddedButtonText = String.format("%" + (padding + button.text.length()) + "s", button.text);
             paddedButtonText = String.format("%-" + MIN_BUTTON_WIDTH + "s", paddedButtonText);

@@ -17,3 +17,5 @@ buildNumber.properties
 .classpath
 # IntelliJ Idea project settings
 .idea/
+# VSCode configuration dir
+.vscode/
