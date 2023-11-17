@@ -187,7 +187,7 @@ class VT100ClientHandler extends Thread {
             bar.show();
 
             UIBar bar1 = new UIBar(0, 23, ScreenWidth, 1, "Example lower bar", UIBar.TextAlign.CENTER, uiManager);
-            bar1.setTextColor(ANSIColors.getXtermTextColor(179));
+            bar1.setTextColor(ANSIColors.getXtermTextColor(200));
             bar1.setBgColor(ANSIColors.BG_WHITE.getCode());
             bar1.show();
 
@@ -208,46 +208,7 @@ class VT100ClientHandler extends Thread {
             uiManager.render();
             uiManager.refresh();
             sleep(3000);
-            progressBar.setProgress(0.8);
-            uiManager.render();
-            uiManager.refresh();
 
-
-//            List<String> items = Arrays.asList("Apple", "Banana", "Cherry", "Date", "Elderberry");
-//
-//            // Inicjalizacja UIComboBox
-//            UIComboBox comboBox = new UIComboBox(5, 8, 20, 1, 2, uiManager, items);
-//            // Rejestracja i wyświetlenie comboBox
-//            comboBox.show();
-//
-//            // Rysowanie interfejsu użytkownika
-//            uiManager.render();
-//            uiManager.refresh();  // Załóżmy, że UIManager ma metodę refresh()
-
-
-            UIBar bar3 = new UIBar(0, 12, ScreenWidth, 0, "Example upper bar", UIBar.TextAlign.CENTER, uiManager);
-            bar3.setBgColor(ANSIColors.BG_RED.getCode());
-            bar3.show();
-            uiManager.render();
-            uiManager.refresh();  // Załóżmy, że UIManager ma metodę refresh()
-
-
-            textField1.hide();
-
-            textField.hide();
-
-
-
-            UIButton button = new UIButton(3, 2, 20, 1, 2, "Kliknij mnie", () -> {
-                System.out.println("Kliknięto przycisk 1");
-            }, uiManager);
-
-            UIDialogWindow UIDialogWindow = new UIDialogWindow(1, 1, 30, 10, 2, "Dialog", uiManager);
-            UIDialogWindow.setMessage("To jest wiadomość w oknie dialogowym");
-            UIDialogWindow.addButton(button);
-            UIDialogWindow.show();
-            uiManager.render();
-            uiManager.refresh();
 
         } catch (Exception e) {
             logger.error("Błąd połączenia"+ e.getMessage());

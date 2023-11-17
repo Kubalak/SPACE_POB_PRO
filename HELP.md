@@ -9,8 +9,11 @@
 - VS Code:
     - Otworzyć główny katalog w VS Code, a następnie przejść do pliku [App.java](src/main/java/pl/psk/termdemo/App.java) i wybrać opcję `Run Java`<br/>![Run app image](help/run.jpg)
 
+<h3><strong>NOTE:</strong> W przypadku uruchomienia bezpośrednio z VS Code niektóre znaki mogą wyświetlać się niepoprawnie!
+</h3>
+
 ## Plik jar
-Aby utworzyć wykonywalny plik jar należy wybrać opcję `package` z menu `Lifecycle`
+Aby utworzyć wykonywalny plik jar należy wybrać opcję `package` z menu `Lifecycle`<br/>
 ![Maven lifecycle](help/maven.jpg)
 
 W katalogu `target` pojawią dwa pliki:
