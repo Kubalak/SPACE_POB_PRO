@@ -174,40 +174,26 @@ class VT100ClientHandler extends Thread {
             tuiScreen.addLayer(0);
             tuiScreen.addLayer(1);
             tuiScreen.addLayer(2);
-            tuiScreen.setBgColor(ANSIColors.BG_BLUE.getCode(), 0);
+            tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode(), 0);
             UIBorder border = new UIBorder(0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
-            border.setBgColor(ANSIColors.BG_BLUE.getCode());
+            border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
             border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
+            final String name = "Term emu v0.1";
+            UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel label = new UILabel("Press CTRL + I to activate text field.", 1,1, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField field = new UITextField(1,2,15,1,0,uiManager);
+            UILabel passLabel = new UILabel("Press CTRL + I to move to next component - numeric input", 1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField passField = new UITextField(1,4,15,1,0,uiManager);
+            passField.setNumeric(true);
+
             border.show();
-            uiManager.render();
-            //      uiManager.refresh(out);
-
-            UIBar bar = new UIBar(0, 0, ScreenWidth, 1, "Example upper bar", UIBar.TextAlign.CENTER, uiManager);
-            bar.setBgColor(ANSIColors.BG_RED.getCode());
-            bar.show();
-
-            UIBar bar1 = new UIBar(0, 23, ScreenWidth, 1, "Example lower bar", UIBar.TextAlign.CENTER, uiManager);
-            bar1.setTextColor(ANSIColors.getXtermTextColor(200));
-            bar1.setBgColor(ANSIColors.BG_WHITE.getCode());
-            bar1.show();
-
+            title.show();
+            label.show();
+            field.show();
+            passLabel.show();
+            passField.show();
             uiManager.render();
             uiManager.refresh();
-
-            UITextField textField = new UITextField(3, 3, 20, 1, 1, uiManager);
-            textField.setPassword(true);
-            textField.show();
-
-            UITextField textField1 = new UITextField(3, 5, 20, 1, 1, uiManager);
-            textField1.show();
-
-
-            UIProgressBar progressBar = new UIProgressBar(3, 7, 20, 1, 1, uiManager);
-            progressBar.setProgress(0.5);
-            progressBar.show();
-            uiManager.render();
-            uiManager.refresh();
-            sleep(3000);
 
 
         } catch (Exception e) {
