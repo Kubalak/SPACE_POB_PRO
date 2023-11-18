@@ -92,10 +92,11 @@ public class UITextField implements UIComponent {
             String newChar = keyInfo.getValue();
 
             // Jeżeli pole ma być numeryczne, ale znak nie jest cyfrą
-            if (isNumeric && !newChar.matches("\\d")) return;
+            if (isNumeric && !newChar.matches("\\d|\\.")) return;
 
             // Jeżeli znak nie pasuje do wzorca regex
             if (regexPattern != null && !newChar.matches(regexPattern.pattern())) return;
+            if(isNumeric && textContent.indexOf(".") != -1 && keyInfo.getValue().equals(".")) return;
         }
 
         // Reszta logiki - kasowanie, dodawanie znaków itd.
