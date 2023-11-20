@@ -22,9 +22,7 @@ public class UITextField implements UIComponent {
     private int zIndex;
     private boolean isActive;
     private UIManager uiManager;
-
-    private int maxCharacters = 20;
-    private boolean isVisible = false;
+    private int maxCharacters = Integer.MAX_VALUE;
 
     public UITextField(int x, int y, int width, int height, int zIndex, UIManager uiManager) {
         this.x = x;
@@ -88,22 +86,22 @@ public class UITextField implements UIComponent {
        logger.debug("Appending text: {}", keyInfo.getValue());
 
         // Sprawdzenie kryteriów przed dodaniem znaku
-        if (keyInfo != null) {
-            String newChar = keyInfo.getValue();
+        String newChar = keyInfo.getValue();
 
-            // Jeżeli pole ma być numeryczne, ale znak nie jest cyfrą
+        // Jeżeli pole ma być numeryczne, ale znak nie jest cyfrą
+        if(keyInfo.getLabel() != KeyLabel.DELETE) {
+            // Jeśli znak nie jest cyfrą ani kropką
             if (isNumeric && !newChar.matches("\\d|\\.")) return;
-
             // Jeżeli znak nie pasuje do wzorca regex
             if (regexPattern != null && !newChar.matches(regexPattern.pattern())) return;
-            if(isNumeric && textContent.indexOf(".") != -1 && keyInfo.getValue().equals(".")) return;
+            // Jeśli kropka już istnieje
+            if (isNumeric && textContent.indexOf(".") != -1 && keyInfo.getValue().equals(".")) return;
         }
 
         // Reszta logiki - kasowanie, dodawanie znaków itd.
         if (textContent.length() < maxCharacters || keyInfo.getLabel() == KeyLabel.DELETE) {
-            if (keyInfo != null) {
                 if (keyInfo.getLabel() == KeyLabel.DELETE) {
-                    if (textContent.length() > 0) {
+                    if (!textContent.isEmpty()) {
                         textContent.deleteCharAt(textContent.length() - 1);
 
                         uiManager.render();
@@ -121,13 +119,11 @@ public class UITextField implements UIComponent {
                 textContent.append(keyInfo.getValue());
 
                 // Ograniczenie długości tekstu do maxCharacters
-                if (textContent.length() > maxCharacters) {
+                if (textContent.length() > maxCharacters)
                     textContent.deleteCharAt(0); // usuń pierwszy znak
-                }
 
                 uiManager.render();
                 uiManager.refresh();
-            }
         }
     }
 
@@ -141,7 +137,6 @@ public class UITextField implements UIComponent {
 
     @Override
     public void show() {
-        isVisible = true;
         if (uiManager != null) {
             uiManager.registerUIComponent(this);
             uiManager.addComponentToScreen(this);
@@ -150,7 +145,6 @@ public class UITextField implements UIComponent {
 
     @Override
     public void hide() {
-        isVisible = false;
         if (uiManager != null) {
             uiManager.unregisterUIComponent(this);
             uiManager.removeComponent(this);
@@ -158,34 +152,22 @@ public class UITextField implements UIComponent {
     }
 
     @Override
-    public int getX() {
-        return x;
-    }
+    public int getX() {return x;}
 
     @Override
-    public int getY() {
-        return y;
-    }
+    public int getY() {return y;}
 
     @Override
-    public int getWidth() {
-        return width;
-    }
+    public int getWidth() {return width;}
 
     @Override
-    public int getHeight() {
-        return height;
-    }
+    public int getHeight() {return height;}
 
     @Override
-    public void setActive(boolean active) {
-        this.isActive = active;
-    }
+    public void setActive(boolean active) {this.isActive = active;}
 
     @Override
-    public boolean isActive() {
-        return this.isActive;
-    }
+    public boolean isActive() {return this.isActive;}
 
     @Override
     public void highlight() {
@@ -207,22 +189,13 @@ public class UITextField implements UIComponent {
     }
 
     @Override
-    public boolean isInteractable() {
-        return true;
-    }
+    public boolean isInteractable() {return true;}
 
 
     @Override
-    public int getZIndex() {
-        return zIndex;
-    }
+    public int getZIndex() {return zIndex;}
 
+    public void setBgColor(String bgColor) {this.bgColor = bgColor;}
 
-    public void setBgColor(String bgColor) {
-        this.bgColor = bgColor;
-    }
-
-    public void setTextColor(String textColor) {
-        this.textColor = textColor;
-    }
+    public void setTextColor(String textColor) {this.textColor = textColor;}
 }

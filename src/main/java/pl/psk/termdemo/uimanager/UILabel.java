@@ -78,10 +78,7 @@ public class UILabel implements UIComponent{
     }
 
     @Override
-    public void hide() {
-        screenManager.removeComponent(this);
-
-    }
+    public void hide() {screenManager.removeComponent(this);}
 
     @Override
     public int getX() {

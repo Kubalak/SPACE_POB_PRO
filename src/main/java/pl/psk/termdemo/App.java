@@ -21,6 +21,7 @@ import pl.psk.termdemo.model.keys.KeyInfo;
 import pl.psk.termdemo.model.keys.KeyboardHandler;
 import pl.psk.termdemo.uimanager.*;
 
+// TODO: Format kodu i obsługa resize okna.
 public class App {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
@@ -174,31 +175,45 @@ class VT100ClientHandler extends Thread {
             tuiScreen.addLayer(0);
             tuiScreen.addLayer(1);
             tuiScreen.addLayer(2);
-            tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode(), 0);
-            UIBorder border = new UIBorder(0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
+            UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+
+            UIBorder border = new UIBorder(0, 1, ScreenWidth, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
             border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
             final String name = "Term emu v0.1";
+            // zIndex na 1 wyświetla 1 poziom wyżej. (BUG?)
             UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel label = new UILabel("Press CTRL + I to activate text field.", 1,1, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField field = new UITextField(1,2,15,1,0,uiManager);
-            UILabel passLabel = new UILabel("Press CTRL + I to move to next component - numeric input", 1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField passField = new UITextField(1,4,15,1,0,uiManager);
+            UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField field = new UITextField(1,3,15,1,0,uiManager);
+            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField passField = new UITextField(1,5,15,1,0,uiManager);
             passField.setNumeric(true);
+            UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.",1,6,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
 
-            border.show();
-            title.show();
-            label.show();
-            field.show();
-            passLabel.show();
-            passField.show();
+
+            UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
+            UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
+
+            tab1.addComponent(border);
+            tab1.addComponent(title);
+            tab1.addComponent(label);
+            tab1.addComponent(field);
+            tab1.addComponent(passLabel);
+            tab1.addComponent(passField);
+            tab1.addComponent(infoLabel);
+
+            tab2.addComponent(tab2label);
+            tab2.addComponent(infoLabel2);
+
+            uiManager.addTab(tab1);
+            uiManager.addTab(tab2);
+
             uiManager.render();
             uiManager.refresh();
-
-
         } catch (Exception e) {
             logger.error("Błąd połączenia"+ e.getMessage());
-
         }
     }
 

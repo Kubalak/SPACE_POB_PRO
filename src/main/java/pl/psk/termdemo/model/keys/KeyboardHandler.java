@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Sprawdzić działanie z programami innymi niż PuTTY.
 public class KeyboardHandler {
 
     // Logger for debugging and trace information
@@ -26,9 +27,13 @@ public class KeyboardHandler {
         addKey(new KeyInfo(KeyLabel.CTRL_D), 4);
         addKey(new KeyInfo(KeyLabel.CTRL_E), 5);
         addKey(new KeyInfo(KeyLabel.ARROW_UP), 27, 91, 65);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_UP), 27, 79, 65);
         addKey(new KeyInfo(KeyLabel.ARROW_DOWN), 27, 91, 66);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_DOWN), 27, 79, 66);
         addKey(new KeyInfo(KeyLabel.ARROW_RIGHT), 27, 91, 67);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_RIGHT), 27, 79, 67);
         addKey(new KeyInfo(KeyLabel.ARROW_LEFT), 27, 91, 68);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_LEFT), 27, 79, 68);
         addKey(new KeyInfo(KeyLabel.F1), 27, 79, 80);
         addKey(new KeyInfo(KeyLabel.F2), 27, 79, 81);
         addKey(new KeyInfo(KeyLabel.F3), 27, 79, 82);
