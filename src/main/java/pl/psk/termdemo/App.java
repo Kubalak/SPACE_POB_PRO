@@ -132,7 +132,7 @@ class VT100ClientHandler extends Thread {
     private TUIScreen tuiScreen;
     private UIManager uiManager;
     private int ScreenWidth = 80;
-    private int ScreenHeight = 24;
+    private int ScreenHeight = 50;
 
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
@@ -186,15 +186,51 @@ class VT100ClientHandler extends Thread {
             UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField field = new UITextField(1,3,15,1,0,uiManager);
+
+
+            //TABELA
+            UILabel firstColumnText = new UILabel("ID", 9,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel secondColumnLabel = new UILabel("Nazwa", 17,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel thirdColumnLabel = new UILabel("Wynik", 27,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UIBorder border2 = new UIBorder(5, 15, 10, 4, 0, uiManager, "1");
+            UIBorder border3 = new UIBorder(15, 15, 10, 4, 0, uiManager, "test");
+            UIBorder border5 = new UIBorder(25, 15, 10, 4, 0, uiManager, "373");
+            UIBorder border6 = new UIBorder(5, 19, 10, 4, 0, uiManager, "2");
+            UIBorder border7 = new UIBorder(15, 19, 10, 4, 0, uiManager, "testdwa");
+            UIBorder border8 = new UIBorder(25, 19, 10, 4, 0, uiManager, "2773");
+
+            List<UIBorder> borders = new ArrayList<>();
+            borders.add(border2);
+            borders.add(border3);
+            borders.add(border5);
+            borders.add(border6);
+            borders.add(border7);
+            borders.add(border8);
+            borders.forEach(singleBorder -> singleBorder.setTextInBorder(tab1));
+            borders.forEach(singleBorder -> singleBorder.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode()));
+
+            List<UILabel> labels = new ArrayList<>();
+            labels.add(firstColumnText);
+            labels.add(secondColumnLabel);
+            labels.add(thirdColumnLabel);
+
+            UITabela tabela = new UITabela(5,15, 70, 20, 0, uiManager, borders, labels);
+
+            //koniec tabela
+
             UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField passField = new UITextField(1,5,15,1,0,uiManager);
             passField.setNumeric(true);
             UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.",1,6,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
 
 
+
+
             UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
             UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
+
+            tabela.drawAllElements(tab1);
 
             tab1.addComponent(border);
             tab1.addComponent(title);
@@ -203,6 +239,9 @@ class VT100ClientHandler extends Thread {
             tab1.addComponent(passLabel);
             tab1.addComponent(passField);
             tab1.addComponent(infoLabel);
+            tab1.addComponent(tabela);
+
+
 
             tab2.addComponent(tab2label);
             tab2.addComponent(infoLabel2);

@@ -19,6 +19,8 @@ public class UIBorder implements UIComponent {
     private String bgColor = ANSIColors.BG_BLUE.getCode();
     private String textColor = ANSIColors.TEXT_WHITE.getCode();
 
+    private String textContent;
+
     private boolean isVisible = false;
     private UIManager uiManager;
 
@@ -31,12 +33,27 @@ public class UIBorder implements UIComponent {
         this.uiManager = uiManager;
     }
 
+    public UIBorder(int x, int y, int width, int height, int zIndex, UIManager uiManager, String textContent) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.zIndex = zIndex;
+        this.uiManager = uiManager;
+        this.textContent = textContent;
+    }
+
     public void setBgColor(String bgColor) {
         this.bgColor = bgColor;
     }
 
     public void setTextColor(String textColor) {
         this.textColor = textColor;
+    }
+
+    public void setTextInBorder(UITab uiTab) {
+        UILabel label = new UILabel(this.textContent, this.x + 3,this.y + 1, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+        uiTab.addComponent(label);
     }
 
     @Override
