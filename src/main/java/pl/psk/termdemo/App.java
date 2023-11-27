@@ -187,7 +187,7 @@ class VT100ClientHandler extends Thread {
             UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField field = new UITextField(1,3,15,1,0,uiManager);
             UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField passField = new UITextField(1,5,15,1,0,uiManager);
+            UITextField passField = new UITextField(1,25,15,1,0,uiManager);
             passField.setNumeric(true);
             UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.",1,6,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
 
@@ -195,6 +195,8 @@ class VT100ClientHandler extends Thread {
             UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
             UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
+            UIDialogWindow window = new UIDialogWindow(1,4, 15,5,0,"A dialog", uiManager);
+            window.setMessage("I ate your grandma");
 
             tab1.addComponent(border);
             tab1.addComponent(title);
@@ -206,6 +208,7 @@ class VT100ClientHandler extends Thread {
 
             tab2.addComponent(tab2label);
             tab2.addComponent(infoLabel2);
+            tab2.addComponent(window);
 
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
@@ -341,9 +344,16 @@ class VT100ClientHandler extends Thread {
                 if (keyInfo != null) {
                     logger.debug("Odebrano klawisz: " + keyInfo.toString());
                     uiManager.handleKeyboardInput(keyInfo);
-                } else {
-                    logger.warn("Nieznana sekwencja klawiszy: " + Arrays.toString(intData));
+                } else if(intData.length == 9) {
+                    if (intData[0] == App.IAC && intData[1] == App.IAC_SB) {
+                        updateWindowSize(bytes, 0);
+                    }
+                    else{
+                        logger.warn("Nieznana sekwencja: "+ Arrays.toString(intData));
+                    }
                 }
+                else
+                logger.warn("Nieznana sekwencja klawiszy: " + Arrays.toString(intData));
             }
 
         }

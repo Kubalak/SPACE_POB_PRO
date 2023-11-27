@@ -155,7 +155,6 @@ public class UITab implements  UIComponent{
     }
 
     public void handleKeyboard(KeyInfo key){
-
         switch (key.getLabel()){
             case ARROW_DOWN:
                 moveToNextActiveComponent();

@@ -49,8 +49,8 @@ public class TUIScreen {
      * Merges all the layers into the merged layer.
      */
     private void mergeLayers() {
-        logger.trace("Merging layers");
         clearScreen();
+        logger.trace("Merging layers");
         var zIndexes = new ArrayList<>(layers.keySet());
         Collections.sort(zIndexes);
         for (Integer zIndex : zIndexes) {
@@ -70,7 +70,7 @@ public class TUIScreen {
      * @param zIndex The z-index of the layer.
      */
     private void ensureLayerExists(int zIndex) {
-        logger.trace("Ensuring layer with z-index {} exists", zIndex);
+//        logger.trace("Ensuring layer with z-index {} exists", zIndex);
         if (!layers.containsKey(zIndex)) {
             layers.put(zIndex, new ScreenCell[height][width]);
         }
@@ -83,9 +83,14 @@ public class TUIScreen {
      * @param zIndex The z-index of the cell.
      */
     public void clearCellAt(int x, int y, int zIndex) {
+        if(x >= width || y >= height){
+            logger.warn("\033[33mInvalid position set for pixel {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
+            return;
+        }
+
         ensureLayerExists(zIndex);
         layers.get(zIndex)[y][x] = null;
-        mergeLayers();
+        // mergeLayers();
     }
 
     /**
@@ -93,7 +98,7 @@ public class TUIScreen {
      * @param zIndex The z-index of the layer.
      */
     public void addLayer(int zIndex) {
-        logger.trace("Adding layer with z-index {}", zIndex);
+//        logger.trace("Adding layer with z-index {}", zIndex);
         ensureLayerExists(zIndex);
     }
 
@@ -101,11 +106,11 @@ public class TUIScreen {
      * Removes the layer with the specified z-index.
      * @param zIndex The z-index of the layer.
      */
-    public void removeLayer(int zIndex) {
-        logger.trace("Removing layer with z-index {}", zIndex);
-        layers.remove(zIndex);
-        mergeLayers();
-    }
+//    public void removeLayer(int zIndex) {
+//        logger.trace("Removing layer with z-index {}", zIndex);
+//        layers.remove(zIndex);
+//        mergeLayers();
+//    }
 
     /**
      * Adds a pixel to the layer with the specified z-index.
@@ -115,10 +120,14 @@ public class TUIScreen {
      * @param cell The cell to add.
      */
     public void addPixelToLayer(int x, int y, int zIndex, ScreenCell cell) {
-        logger.trace("Adding cell at ({}, {}) with z-index {}", x, y, zIndex);
+//        logger.trace("Adding cell at ({}, {}) with z-index {}", x, y, zIndex);
+        if(x >= width || y >= height){
+            logger.warn("\033[33mInvalid position set for pixel {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
+            return;
+        }
         ensureLayerExists(zIndex);
         layers.get(zIndex)[y][x] = cell;
-        mergeLayers();
+        // mergeLayers();
     }
 
     /**
@@ -128,13 +137,13 @@ public class TUIScreen {
      * @param zIndex The z-index of the layer.
      * @param cell The cell to add.
      */
-    public void updatePixelInLayer(int x, int y, int zIndex, ScreenCell cell) {
-        logger.trace("Updating cell at ({}, {}) with z-index {}", x, y, zIndex);
-        if (layers.containsKey(zIndex)) {
-            layers.get(zIndex)[y][x] = cell;
-            mergeLayers();
-        }
-    }
+//    public void updatePixelInLayer(int x, int y, int zIndex, ScreenCell cell) {
+//        logger.trace("Updating cell at ({}, {}) with z-index {}", x, y, zIndex);
+//        if (layers.containsKey(zIndex)) {
+//            layers.get(zIndex)[y][x] = cell;
+//            mergeLayers();
+//        }
+//    }
 
     /**
      * Clears the screen.
@@ -159,13 +168,17 @@ public class TUIScreen {
      */
     public void setText(int x, int y, String text, String textColor, String bgColor, int zIndex) {
         logger.trace("Setting text at ({}, {}) with z-index {}", x, y, zIndex);
+        if(x >= width || y  >= height){
+            logger.warn("\033[33mInvalid position set for text {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
+            return;
+        }
         ensureLayerExists(zIndex);
         ScreenCell[][] targetLayer = layers.get(zIndex);
         for (int i = 0; i < text.length() && x + i < width; i++) {
-            logger.trace("Setting character {} at ({}, {})", text.charAt(i), x + i, y);
+            //logger.trace("Setting character {} at ({}, {})", text.charAt(i), x + i, y);
             targetLayer[y][x + i] = new ScreenCell(text.charAt(i), textColor, bgColor);
         }
-        mergeLayers();
+        //mergeLayers();
     }
 
     /**
@@ -180,15 +193,15 @@ public class TUIScreen {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (targetLayer[i][j] == null) {
-                    logger.trace("Setting background color at ({}, {})", j, i);
+                    // logger.trace("Setting background color at ({}, {})", j, i);
                     targetLayer[i][j] = new ScreenCell(' ', ANSIColors.TEXT_BLACK.getCode(), bgColor);
                 } else {
-                    logger.trace("Setting background color at ({}, {})", j, i);
+                    // logger.trace("Setting background color at ({}, {})", j, i);
                     targetLayer[i][j].setBgColor(bgColor);
                 }
             }
         }
-        mergeLayers();
+        //mergeLayers();
     }
 
     /**
@@ -197,6 +210,7 @@ public class TUIScreen {
      */
     public String render() {
         logger.trace("Rendering screen");
+        long start = System.nanoTime();
         StringBuilder sb = new StringBuilder();
         sb.append("\033[H");
         for (int i = 0; i < height; i++) {
@@ -208,6 +222,8 @@ public class TUIScreen {
             sb.append("\033[E");
         }
         sb.append("\033[0m");
+        long stop = System.nanoTime();
+        logger.info("Render finished in {} ms", (stop - start) / 1000000.0);
         return sb.toString();
     }
 
@@ -217,6 +233,7 @@ public class TUIScreen {
      * @throws IOException If an I/O error occurs.
      */
     public void refresh(OutputStream out) throws IOException {
+        mergeLayers();
         String rendered = render();
         out.write(rendered.getBytes());
         out.flush();
