@@ -1,7 +1,7 @@
 package pl.psk.termdemo.uimanager;
 
 
-
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.psk.termdemo.model.color.ANSIColors;
@@ -11,7 +11,7 @@ import pl.psk.termdemo.model.keys.KeyLabel;
 import java.util.List;
 
 
-public class UIComboBox implements UIComponent, KeyboardInputHandler  {
+public class UIComboBox implements UIComponent, KeyboardInputHandler {
     Logger logger = LoggerFactory.getLogger(UIComboBox.class);
 
     private List<String> items;
@@ -22,6 +22,7 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
     private int zIndex;
     private boolean isActive;
     private UIManager uiManager;
+    @Getter
     private boolean isExpanded;
     private int highlightIndex;
     private int defaultIndex;
@@ -36,19 +37,12 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
         this.zIndex = zIndex;
         this.uiManager = uiManager;
         this.items = items;
-
         this.isExpanded = false;
     }
-
-
-
     public void toggleExpand() {
         isExpanded = !isExpanded;
         if (isExpanded) {
-            zIndex += 1;
             highlightIndex = selectedIndex;
-        } else {
-            zIndex -= 1;
         }
         uiManager.render();
         uiManager.refresh();
@@ -67,9 +61,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
 
     @Override
     public void draw(UIManager uiManager) {
-        if (!isActive) {
-            return;
-        }
 
         String displayText = items.get(selectedIndex);
 
@@ -83,9 +74,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
             uiManager.getScreen().addPixelToLayer(x + i, y, zIndex, cell);
         }
 
-        ScreenCell arrowCell = new ScreenCell('v', textColor, bgColor);
-        uiManager.getScreen().addPixelToLayer(x + width - 1, y, zIndex, arrowCell);
-
         if (isExpanded) {
             for (int i = 0; i < items.size(); i++) {
                 String item = items.get(i);
@@ -93,14 +81,7 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
                     char c = (j < item.length()) ? item.charAt(j) : ' ';
                     String currentBgColor = (i == selectedOption) ? ANSIColors.BG_YELLOW.getCode() : ANSIColors.BG_BLUE.getCode();
                     ScreenCell cell = new ScreenCell(c, ANSIColors.TEXT_WHITE.getCode(), currentBgColor);
-                    uiManager.getScreen().addPixelToLayer(x + j, y + i + 1, zIndex + 1, cell);
-                }
-            }
-        } else {
-            for (int i = 1; i <= items.size(); i++) {
-                for (int j = 0; j < width; j++) {
-                    ScreenCell emptyCell = new ScreenCell(' ', textColor, bgColor);
-                    uiManager.getScreen().addPixelToLayer(x + j, y + i, zIndex + 1, emptyCell);
+                    uiManager.getScreen().addPixelToLayer(x + j, y + i + 1, zIndex, cell);
                 }
             }
         }
@@ -190,7 +171,7 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler  {
 
     public void confirmSelection() {
         logger.info("Confirming selection");
-        logger.debug("Selected index: {}", selectedOption);
+        logger.error("Selected index: {}", items.get(selectedOption));
         isExpanded = false;
         selectedIndex = selectedOption;
         isActive = false;

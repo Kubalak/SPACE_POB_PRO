@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Obsługa entera.
-public class UITab implements  UIComponent{
+public class UITab implements UIComponent {
 
     Logger logger = LoggerFactory.getLogger(UITab.class);
     private String title;
@@ -33,38 +33,40 @@ public class UITab implements  UIComponent{
         this.title = title;
         this.active = false;
     }
+
     @Override
     public void draw(UIManager uiManager) {
-        if(active) {
+        if (active) {
             for (int i = 0; i < w; ++i)
                 for (int j = y + 1; j < h; ++j) {
                     ScreenCell emptyCell = new ScreenCell(' ', textColor, bgColor);
                     uiManager.getScreen().addPixelToLayer(i, j, zIndex, emptyCell);
                 }
         }
-        uiManager.getScreen().addPixelToLayer(x, y, zIndex, new ScreenCell('┌',  textColor, tabColor));
+        uiManager.getScreen().addPixelToLayer(x, y, zIndex, new ScreenCell('┌', textColor, tabColor));
         uiManager.getScreen().addPixelToLayer(x + 1, y, zIndex, new ScreenCell('─', textColor, tabColor));
 
-        for(int i = 0; i < title.length(); ++i){
+        for (int i = 0; i < title.length(); ++i) {
             uiManager.getScreen().addPixelToLayer(x + 2 + i, y, zIndex, new ScreenCell(title.charAt(i), textColor, tabColor));
         }
-        uiManager.getScreen().addPixelToLayer(x + title.length() + 2 , y, zIndex, new ScreenCell('─', textColor, tabColor));
+        uiManager.getScreen().addPixelToLayer(x + title.length() + 2, y, zIndex, new ScreenCell('─', textColor, tabColor));
         uiManager.getScreen().addPixelToLayer(x + title.length() + 3, y, zIndex, new ScreenCell('┐', textColor, tabColor));
-        if(active) {
+        if (active) {
             for (UIComponent component : components)
                 component.draw(uiManager);
         }
     }
 
-    public void addComponent(UIComponent component){
+    public void addComponent(UIComponent component) {
         logger.debug("Adding UI component " + component.getClass().getSimpleName());
         components.add(component);
     }
 
-    public void removeComponent(UIComponent component){
+    public void removeComponent(UIComponent component) {
         logger.debug("Removing UI component " + component.getClass().getSimpleName());
         components.remove(component);
     }
+
     @Override
     public int getZIndex() {
         return zIndex;
@@ -83,7 +85,7 @@ public class UITab implements  UIComponent{
     @Override
     public void show() {
         active = true;
-        if(uiManager != null){
+        if (uiManager != null) {
             uiManager.registerUIComponent(this);
             uiManager.addComponentToScreen(this);
         }
@@ -92,7 +94,7 @@ public class UITab implements  UIComponent{
     @Override
     public void hide() {
         active = false;
-        if(uiManager != null){
+        if (uiManager != null) {
             uiManager.unregisterUIComponent(this);
             uiManager.removeComponent(this);
         }
@@ -122,7 +124,7 @@ public class UITab implements  UIComponent{
     public void setActive(boolean active) {
 
         this.active = active;
-        if(active) highlight();
+        if (active) highlight();
         else resetHighlight();
     }
 
@@ -154,20 +156,44 @@ public class UITab implements  UIComponent{
         return true;
     }
 
-    public void handleKeyboard(KeyInfo key){
-        switch (key.getLabel()){
+    public void handleKeyboard(KeyInfo key) {
+        switch (key.getLabel()) {
             case ARROW_DOWN:
+                if (active && currentActiveComponent != -1 && components.get(currentActiveComponent) instanceof UIComboBox comboBox) {
+                    if (comboBox.isExpanded()) {
+                        comboBox.navigateOption(key.getLabel());
+                        break;
+                    }
+                }
                 moveToNextActiveComponent();
                 break;
             case ARROW_UP:
+                if (active && currentActiveComponent != -1 && components.get(currentActiveComponent) instanceof UIComboBox comboBox) {
+                    if (comboBox.isExpanded()) {
+                        comboBox.navigateOption(key.getLabel());
+                        break;
+                    }
+                }
                 moveToPrevActiveComponent();
                 break;
             case ENTER:
-                components.get(currentActiveComponent).performAction();
+                if (active && currentActiveComponent != -1 && components.get(currentActiveComponent) instanceof UIComboBox comboBox) {
+                    if (comboBox.isExpanded())
+                        comboBox.confirmSelection();
+                    else
+                        comboBox.toggleExpand();
+                    break;
+                } else if (currentActiveComponent != -1)
+                    components.get(currentActiveComponent).performAction();
                 break;
             default:
-                if(active && currentActiveComponent != -1 && components.get(currentActiveComponent) instanceof UITextField activeField)
-                    activeField.appendText(key);
+                if (active && currentActiveComponent != -1) {
+                    if (components.get(currentActiveComponent) instanceof UITextField activeField)
+                        activeField.appendText(key);
+                    if (components.get(currentActiveComponent) instanceof UIComboBox comboBox)
+                        comboBox.handleKeyboardInput(key);
+                }
+
                 break;
         }
         highlightActiveComponent();
@@ -202,7 +228,8 @@ public class UITab implements  UIComponent{
 
         components.get(currentActiveComponent).setActive(true);
     }
-    private void moveToPrevActiveComponent(){
+
+    private void moveToPrevActiveComponent() {
         if (components.isEmpty()) {
             logger.trace("No components to activate.");
             return;
@@ -215,7 +242,7 @@ public class UITab implements  UIComponent{
         int startComponent = currentActiveComponent == -1 ? 0 : currentActiveComponent;
         do {
             currentActiveComponent = (currentActiveComponent - 1);
-            if(currentActiveComponent < 0)
+            if (currentActiveComponent < 0)
                 currentActiveComponent = components.size() - 1;
         } while (!components.get(currentActiveComponent).isInteractable() && currentActiveComponent != startComponent);
 

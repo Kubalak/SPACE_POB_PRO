@@ -52,12 +52,13 @@ public class UIManager {
         removeComponent(component);
     }
 
-    public void addTab(UITab tab){
+    public void addTab(UITab tab) {
         tab.show();
         tab.setActive(tabs.isEmpty());
         tabs.add(tab);
     }
-    public void removeTab(UITab tab){
+
+    public void removeTab(UITab tab) {
         tab.hide();
         tabs.remove(tab);
     }
@@ -81,7 +82,7 @@ public class UIManager {
 
         UIComponent activeComponent = uiComponents.get(currentActiveComponent);
         if (activeComponent instanceof UITextField activeTextField) {
-          logger.trace("Active component is a text field, appending text.");
+            logger.trace("Active component is a text field, appending text.");
             activeTextField.appendText(keyInfo);
         }
     }
@@ -116,13 +117,14 @@ public class UIManager {
         logger.trace("Setting current active component to: " + index);
         this.currentActiveComponent = index;
     }
+
     public void handleKeyboardInput(KeyInfo keyInfo) {
         logger.trace("Handling keyboard input: " + keyInfo);
 
         // Check if active component is a keyboard input handler for custom logic (e.g. combobox)
         UIComponent activeComponent = currentActiveComponent == -1 ? null : uiComponents.get(currentActiveComponent);
         if (activeComponent instanceof KeyboardInputHandler) {
-           logger.trace("Active component is a keyboard input handler, delegating input.");
+            logger.trace("Active component is a keyboard input handler, delegating input.");
             ((KeyboardInputHandler) activeComponent).handleKeyboardInput(keyInfo);
             return;
         }
@@ -135,12 +137,8 @@ public class UIManager {
             case CTRL_ARROW_LEFT:
                 moveToPrevTab();
                 break;
-            case ENTER:
-                if (currentActiveComponent != -1)
-                    uiComponents.get(currentActiveComponent).performAction();
-                break;
             default:
-                if(!tabs.isEmpty())
+                if (!tabs.isEmpty())
                     tabs.get(currentTab).handleKeyboard(keyInfo);
                 break;
         }
@@ -242,15 +240,15 @@ public class UIManager {
 //    }
 
     private void moveToNextTab() {
-        if(!tabs.isEmpty()) {
+        if (!tabs.isEmpty()) {
             tabs.get(currentTab).setActive(false);
             currentTab = (currentTab + 1) % tabs.size();
             tabs.get(currentTab).setActive(true);
         }
     }
 
-    private void moveToPrevTab(){
-        if(!tabs.isEmpty()) {
+    private void moveToPrevTab() {
+        if (!tabs.isEmpty()) {
             tabs.get(currentTab).setActive(false);
             currentTab -= 1;
             if (currentTab < 0) currentTab = tabs.size() - 1;
@@ -261,8 +259,8 @@ public class UIManager {
 
     @SneakyThrows
     public void refresh() {
-      logger.trace("Refreshing screen.");
-        if(out != null) {
+        logger.trace("Refreshing screen.");
+        if (out != null) {
             screen.refresh(this.out);
         } else {
             logger.warn("OutputStream is null, skipping refresh.");

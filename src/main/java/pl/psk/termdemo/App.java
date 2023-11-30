@@ -1,7 +1,17 @@
 package pl.psk.termdemo;
 
 
-import java.io.*;
+import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.psk.termdemo.model.color.ANSIColors;
+import pl.psk.termdemo.model.keys.KeyInfo;
+import pl.psk.termdemo.model.keys.KeyboardHandler;
+import pl.psk.termdemo.uimanager.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -10,16 +20,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-
-import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.psk.termdemo.model.color.ANSIColors;
-import pl.psk.termdemo.uimanager.*;
-import pl.psk.termdemo.model.keys.KeyInfo;
-import pl.psk.termdemo.model.keys.KeyboardHandler;
-import pl.psk.termdemo.uimanager.*;
 
 // TODO: Format kodu i obsługa resize okna.
 public class App {
@@ -118,14 +118,14 @@ public class App {
                 new VT100ClientHandler(in, out).start();
             }
         } catch (Exception e) {
-           logger.error("Błąd serwera: " + e.getMessage());
+            logger.error("Błąd serwera: " + e.getMessage());
         }
     }
 }
 
 class VT100ClientHandler extends Thread {
 
-    private  final Logger logger = LoggerFactory.getLogger(VT100ClientHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(VT100ClientHandler.class);
 
     private InputStream in;
     private OutputStream out;
@@ -183,21 +183,21 @@ class VT100ClientHandler extends Thread {
             border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
             final String name = "Term emu v0.1";
             // zIndex na 1 wyświetla 1 poziom wyżej. (BUG?)
-            UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField field = new UITextField(1,3,15,1,0,uiManager);
-            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField passField = new UITextField(1,25,15,1,0,uiManager);
+            UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2, ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel label = new UILabel("Press arrow down to activate next field.", 1, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField field = new UITextField(1, 3, 15, 1, 0, uiManager);
+            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField passField = new UITextField(1, 5, 15, 1, 0, uiManager);
             passField.setNumeric(true);
-            UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.",1,6,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
+            UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 1, 6, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
 
-            UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
-            UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
-            UIDialogWindow window = new UIDialogWindow(1,4, 15,5,0,"A dialog", uiManager);
+            UITab tab2 = new UITab("Second", 5, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UILabel tab2label = new UILabel("Label for second tab", 1, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.", 1, 3, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UIDialogWindow window = new UIDialogWindow(1, 4, 15, 5, 0, "A dialog", uiManager);
             window.setMessage("I ate your grandma");
-
+            UIComboBox uiComboBox = new UIComboBox(10, 15, 15, 5, 0, uiManager, List.of("Daniel", "Kuba", "Patryk"));
             tab1.addComponent(border);
             tab1.addComponent(title);
             tab1.addComponent(label);
@@ -209,14 +209,14 @@ class VT100ClientHandler extends Thread {
             tab2.addComponent(tab2label);
             tab2.addComponent(infoLabel2);
             tab2.addComponent(window);
-
+            tab2.addComponent(uiComboBox);
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
 
             uiManager.render();
             uiManager.refresh();
         } catch (Exception e) {
-            logger.error("Błąd połączenia"+ e.getMessage());
+            logger.error("Błąd połączenia" + e.getMessage());
         }
     }
 
@@ -344,20 +344,17 @@ class VT100ClientHandler extends Thread {
                 if (keyInfo != null) {
                     logger.debug("Odebrano klawisz: " + keyInfo.toString());
                     uiManager.handleKeyboardInput(keyInfo);
-                } else if(intData.length == 9) {
+                } else if (intData.length == 9) {
                     if (intData[0] == App.IAC && intData[1] == App.IAC_SB) {
                         updateWindowSize(bytes, 0);
+                    } else {
+                        logger.warn("Nieznana sekwencja: " + Arrays.toString(intData));
                     }
-                    else{
-                        logger.warn("Nieznana sekwencja: "+ Arrays.toString(intData));
-                    }
-                }
-                else
-                logger.warn("Nieznana sekwencja klawiszy: " + Arrays.toString(intData));
+                } else
+                    logger.warn("Nieznana sekwencja klawiszy: " + Arrays.toString(intData));
             }
 
         }
-
 
 
         private void handleMousePosition(byte[] sequence) throws IOException {
