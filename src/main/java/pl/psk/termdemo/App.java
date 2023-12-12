@@ -177,6 +177,7 @@ class VT100ClientHandler extends Thread {
             tuiScreen.addLayer(2);
             tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
             UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab3 = new UITab("Third table page", 10,0,ScreenWidth, ScreenHeight, 0 , uiManager);
 
             UIBorder border = new UIBorder(0, 1, ScreenWidth, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
@@ -188,33 +189,31 @@ class VT100ClientHandler extends Thread {
             UITextField field = new UITextField(1,3,15,1,0,uiManager);
 
 
-            //TABELA
-            UILabel firstColumnText = new UILabel("ID", 9,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel secondColumnLabel = new UILabel("Nazwa", 17,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel thirdColumnLabel = new UILabel("Wynik", 27,14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UIBorder border2 = new UIBorder(5, 15, 10, 4, 0, uiManager, "1");
-            UIBorder border3 = new UIBorder(15, 15, 10, 4, 0, uiManager, "test");
-            UIBorder border5 = new UIBorder(25, 15, 10, 4, 0, uiManager, "373");
-            UIBorder border6 = new UIBorder(5, 19, 10, 4, 0, uiManager, "2");
-            UIBorder border7 = new UIBorder(15, 19, 10, 4, 0, uiManager, "testdwa");
-            UIBorder border8 = new UIBorder(25, 19, 10, 4, 0, uiManager, "2773");
+            List<String> rowContents = new ArrayList<>();
+            rowContents.add("1");
+            rowContents.add("test");
+            rowContents.add("373");
+            rowContents.add("2");
+            rowContents.add("testdwa");
+            rowContents.add("2773");
+//            rowContents.add("3");
+//            rowContents.add("niewiem");
+//            rowContents.add("2115");
+//            rowContents.add("4");
+//            rowContents.add("niewiem");
+//            rowContents.add("2115");
 
-            List<UIBorder> borders = new ArrayList<>();
-            borders.add(border2);
-            borders.add(border3);
-            borders.add(border5);
-            borders.add(border6);
-            borders.add(border7);
-            borders.add(border8);
-            borders.forEach(singleBorder -> singleBorder.setTextInBorder(tab1));
-            borders.forEach(singleBorder -> singleBorder.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode()));
+            List<String> newLabes = new ArrayList<>();
+            newLabes.add("ID");
+            newLabes.add("Nazwa");
+            newLabes.add("Wynik");
 
-            List<UILabel> labels = new ArrayList<>();
-            labels.add(firstColumnText);
-            labels.add(secondColumnLabel);
-            labels.add(thirdColumnLabel);
+            //tabela dajemy x i y, width i height, index , managera i labelki i wiersze
+            UITabela tabelaFinal = new UITabela(5,5, 30, 10, 0, uiManager, newLabes, rowContents);
 
-            UITabela tabela = new UITabela(5,15, 70, 20, 0, uiManager, borders, labels);
+            //tu sie rysuje
+            tabelaFinal.drawAllHeaders(tab3);
+            tabelaFinal.drawAllRows(tab3);
 
             //koniec tabela
 
@@ -230,7 +229,6 @@ class VT100ClientHandler extends Thread {
             UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
 
-            tabela.drawAllElements(tab1);
 
             tab1.addComponent(border);
             tab1.addComponent(title);
@@ -239,15 +237,18 @@ class VT100ClientHandler extends Thread {
             tab1.addComponent(passLabel);
             tab1.addComponent(passField);
             tab1.addComponent(infoLabel);
-            tab1.addComponent(tabela);
 
 
 
             tab2.addComponent(tab2label);
             tab2.addComponent(infoLabel2);
 
+            tab3.addComponent(tabelaFinal);
+
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
+
+            uiManager.addTab(tab3);
 
             uiManager.render();
             uiManager.refresh();

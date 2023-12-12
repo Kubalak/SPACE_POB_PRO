@@ -27,25 +27,54 @@ public class UITabela implements UIComponent {
         private List<UIBorder> borders;
 
         //UILabel teksty nad tabela
-        private List<UILabel> labels;
 
-        public UITabela(int x, int y, int width, int height, int zIndex, UIManager uiManager, List<UIBorder> borders, List<UILabel> labels) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.zIndex = zIndex;
-            this.uiManager = uiManager;
-            this.textContent = new StringBuilder();
-            this.borders = borders;
-            this.labels = labels;
+        private List<String> newLabels;
+
+        private List<String> rowContents;
+
+
+
+    public UITabela(int x, int y, int width, int height, int zIndex, UIManager uiManager, List<String> newLabels, List<String> rowContents) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.zIndex = zIndex;
+        this.uiManager = uiManager;
+        this.textContent = new StringBuilder();
+        this.newLabels = newLabels;
+        this.rowContents = rowContents;
+    }
+
+        public void drawAllHeaders(UITab uiTab) {
+            int xPosition = this.x;
+            for (String label : this.newLabels) {
+                UILabel labelObject = new UILabel(label, xPosition, this.y, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+                xPosition += this.width / this.newLabels.size();
+                uiTab.addComponent(labelObject);
+            }
         }
 
-        public void drawAllElements(UITab uiTab) {
-
-            this.labels.forEach(uiTab::addComponent);
-            this.borders.forEach(uiTab::addComponent);
+        public void drawAllRows(UITab uiTab) {
+            int startingY = this.y + 1;
+            int startingX = this.x;
+            int count  = 1;
+            int elementsPerRow = 3; // Ilość elementów w jednym rzędzie
+            int totalElements = this.rowContents.size();
+            for(String rowContent : this.rowContents) {
+                if (totalElements >= elementsPerRow && count > 1 && (count - 1) % elementsPerRow == 0) {
+                    startingY = startingY + this.height / (this.rowContents.size() / this.newLabels.size());
+                    startingX = this.x;
+                }
+                UIBorder border = new UIBorder(startingX, startingY, this.width / this.newLabels.size(), this.height / (this.rowContents.size() / this.newLabels.size()), 0, uiManager, rowContent);
+                count++;
+                border.setTextInBorder(uiTab);
+                border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
+                startingX += this.width / this.newLabels.size();
+                uiTab.addComponent(border);
+            }
         }
+
 
         public void setMaxCharacters(int maxCharacters) {
             this.maxCharacters = maxCharacters;
@@ -70,23 +99,23 @@ public class UITabela implements UIComponent {
         @Override
         public void draw(UIManager uiManager) {
 
-            String fullText = isPassword ? "*".repeat(textContent.length()) : textContent.toString();
-            String displayText = fullText;
-
-            if (fullText.length() > width) {
-                displayText = fullText.substring(fullText.length() - width);
-            }
-            // Czyść cały obszar pola tekstowego
-            for (int i = 0; i < width; i++) {
-                ScreenCell emptyCell = new ScreenCell(' ', textColor, bgColor);  // Użyj pustego znaku do wyczyszczenia
-                uiManager.getScreen().addPixelToLayer(x + i, y, zIndex, emptyCell);
-            }
-
-            // Następnie dodaj nowy tekst
-            for (int i = 0; i < displayText.length(); i++) {
-                ScreenCell cell = new ScreenCell(displayText.charAt(i), textColor, bgColor);
-                uiManager.getScreen().addPixelToLayer(x + i, y, zIndex, cell);
-            }
+//            String fullText = isPassword ? "*".repeat(textContent.length()) : textContent.toString();
+//            String displayText = fullText;
+//
+//            if (fullText.length() > width) {
+//                displayText = fullText.substring(fullText.length() - width);
+//            }
+//            // Czyść cały obszar pola tekstowego
+//            for (int i = 0; i < width; i++) {
+//                ScreenCell emptyCell = new ScreenCell(' ', textColor, bgColor);  // Użyj pustego znaku do wyczyszczenia
+//                uiManager.getScreen().addPixelToLayer(x + i, y, zIndex, emptyCell);
+//            }
+//
+//            // Następnie dodaj nowy tekst
+//            for (int i = 0; i < displayText.length(); i++) {
+//                ScreenCell cell = new ScreenCell(displayText.charAt(i), textColor, bgColor);
+//                uiManager.getScreen().addPixelToLayer(x + i, y, zIndex, cell);
+//            }
         }
 
         @Override
