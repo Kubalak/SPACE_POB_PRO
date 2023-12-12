@@ -132,7 +132,7 @@ class VT100ClientHandler extends Thread {
     private TUIScreen tuiScreen;
     private UIManager uiManager;
     private int ScreenWidth = 80;
-    private int ScreenHeight = 24;
+    private int ScreenHeight = 50;
 
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
@@ -177,6 +177,7 @@ class VT100ClientHandler extends Thread {
             tuiScreen.addLayer(2);
             tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
             UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab3 = new UITab("Third table page", 10,0,ScreenWidth, ScreenHeight, 0 , uiManager);
 
             UIBorder border = new UIBorder(0, 1, ScreenWidth, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
@@ -188,6 +189,41 @@ class VT100ClientHandler extends Thread {
             UITextField field = new UITextField(1, 3, 15, 1, 0, uiManager);
             UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField passField = new UITextField(1, 5, 15, 1, 0, uiManager);
+            UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField field = new UITextField(1,3,15,1,0,uiManager);
+
+
+            List<String> rowContents = new ArrayList<>();
+            rowContents.add("1");
+            rowContents.add("test");
+            rowContents.add("373");
+            rowContents.add("2");
+            rowContents.add("testdwa");
+            rowContents.add("2773");
+//            rowContents.add("3");
+//            rowContents.add("niewiem");
+//            rowContents.add("2115");
+//            rowContents.add("4");
+//            rowContents.add("niewiem");
+//            rowContents.add("2115");
+
+            List<String> newLabes = new ArrayList<>();
+            newLabes.add("ID");
+            newLabes.add("Nazwa");
+            newLabes.add("Wynik");
+
+            //tabela dajemy x i y, width i height, index , managera i labelki i wiersze
+            UITabela tabelaFinal = new UITabela(5,5, 30, 10, 0, uiManager, newLabes, rowContents);
+
+            //tu sie rysuje
+            tabelaFinal.drawAllHeaders(tab3);
+            tabelaFinal.drawAllRows(tab3);
+
+            //koniec tabela
+
+            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField passField = new UITextField(1,5,15,1,0,uiManager);
             passField.setNumeric(true);
             UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 1, 6, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
@@ -198,6 +234,13 @@ class VT100ClientHandler extends Thread {
             UIDialogWindow window = new UIDialogWindow(1, 4, 15, 5, 0, "A dialog", uiManager);
             window.setMessage("I ate your grandma");
             UIComboBox uiComboBox = new UIComboBox(10, 15, 15, 5, 0, uiManager, List.of("Daniel", "Kuba", "Patryk"));
+
+
+            UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
+            UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
+
+
             tab1.addComponent(border);
             tab1.addComponent(title);
             tab1.addComponent(label);
@@ -206,12 +249,19 @@ class VT100ClientHandler extends Thread {
             tab1.addComponent(passField);
             tab1.addComponent(infoLabel);
 
+
+
             tab2.addComponent(tab2label);
             tab2.addComponent(infoLabel2);
             tab2.addComponent(window);
             tab2.addComponent(uiComboBox);
+
+            tab3.addComponent(tabelaFinal);
+
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
+
+            uiManager.addTab(tab3);
 
             uiManager.render();
             uiManager.refresh();
