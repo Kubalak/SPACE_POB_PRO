@@ -131,4 +131,9 @@ public class UIProgressBar implements UIComponent {
     public boolean isInteractable() {
         return false;  // ProgressBar is not interactive
     }
+
+    @Override
+    public void windowResized(int width, int height){
+
+    }
 }

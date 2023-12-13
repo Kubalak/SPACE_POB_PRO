@@ -111,7 +111,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
     @Override
     public void show() {
         if (uiManager != null) {
-            uiManager.registerUIComponent(this);
             uiManager.addComponentToScreen(this);
         }
     }
@@ -119,7 +118,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
     @Override
     public void hide() {
         if (uiManager != null) {
-            uiManager.unregisterUIComponent(this);
             uiManager.removeComponent(this);
         }
     }
@@ -221,6 +219,11 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         }
         uiManager.render();
         uiManager.refresh();
+    }
+
+    @Override
+    public void windowResized(int width, int height){
+
     }
 
 }

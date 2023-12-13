@@ -21,7 +21,6 @@ public class UIManager {
     @Getter
     private TUIScreen screen;
 
-    private final List<UIComponent> uiComponents = new ArrayList<>();
 
     private final List<UITab> tabs = new ArrayList<>();
 
@@ -37,54 +36,22 @@ public class UIManager {
         this.out = out;
     }
 
-    public void registerUIComponent(UIComponent component) {
-        logger.trace("Registering UI component: " + component.getClass().getSimpleName());
-        uiComponents.add(component);
 
-    }
     public void addComponentToScreen(UIComponent component) {
         logger.trace("Adding UI component to screen: " + component.getClass().getSimpleName());
         layers.computeIfAbsent(component.getZIndex(), k -> new ArrayList<>()).add(component);
     }
-    public void unregisterUIComponent(UIComponent component) {
-        logger.trace("Unregistering UI component: " + component.getClass().getSimpleName());
-        uiComponents.remove(component);
-        removeComponent(component);
-    }
 
     public void addTab(UITab tab) {
         tab.show();
-        tab.setActive(tabs.isEmpty());
+        if(tabs.isEmpty())
+            tab.setActive(true);
         tabs.add(tab);
     }
 
     public void removeTab(UITab tab) {
         tab.hide();
         tabs.remove(tab);
-    }
-
-    public void handleMouseClick(int x, int y) {
-        logger.trace("Handling mouse click at: " + x + ", " + y);
-        for (UIComponent component : uiComponents) {
-            if (component.isInside(x, y)) {
-                component.performAction();
-                break;
-            }
-        }
-    }
-
-    public void handleKeyboardInputForTextField(KeyInfo keyInfo) {
-        logger.trace("Handling keyboard input for text field: " + keyInfo);
-        if (currentActiveComponent == -1) {
-            logger.trace("No active component, skipping.");
-            return;
-        }
-
-        UIComponent activeComponent = uiComponents.get(currentActiveComponent);
-        if (activeComponent instanceof UITextField activeTextField) {
-            logger.trace("Active component is a text field, appending text.");
-            activeTextField.appendText(keyInfo);
-        }
     }
 
     public void render() {
@@ -121,13 +88,6 @@ public class UIManager {
     public void handleKeyboardInput(KeyInfo keyInfo) {
         logger.trace("Handling keyboard input: " + keyInfo);
 
-        // Check if active component is a keyboard input handler for custom logic (e.g. combobox)
-        UIComponent activeComponent = currentActiveComponent == -1 ? null : uiComponents.get(currentActiveComponent);
-        if (activeComponent instanceof KeyboardInputHandler) {
-            logger.trace("Active component is a keyboard input handler, delegating input.");
-            ((KeyboardInputHandler) activeComponent).handleKeyboardInput(keyInfo);
-            return;
-        }
 
         // Standards logic for navigation and activation
         switch (keyInfo.getLabel()) {
@@ -144,107 +104,13 @@ public class UIManager {
         }
     }
 
-//    private void navigateUsingArrows(KeyLabel direction) {
-//        logger.trace("Navigating using arrows: " + direction);
-//        if (currentActiveComponent == -1) {
-//            return;
-//        }
-//
-//        UIComponent currentComponent = uiComponents.get(currentActiveComponent);
-//        int currentX = currentComponent.getX() + currentComponent.getWidth() / 2;
-//        int currentY = currentComponent.getY() + currentComponent.getHeight() / 2;
-//
-//        UIComponent closestComponent = null;
-//        int minDistance = Integer.MAX_VALUE;
-//
-//        for (UIComponent component : uiComponents) {
-//            if (!component.isInteractable() || component == currentComponent) {
-//                continue;
-//            }
-//
-//            int componentX = component.getX() + component.getWidth() / 2;
-//            int componentY = component.getY() + component.getHeight() / 2;
-//
-//            int distanceX = componentX - currentX;
-//            int distanceY = componentY - currentY;
-//
-//            boolean isDirectionMatch = switch (direction) {
-//                case ARROW_UP -> distanceY < 0;
-//                case ARROW_DOWN -> distanceY > 0;
-//                case ARROW_LEFT -> distanceX < 0;
-//                case ARROW_RIGHT -> distanceX > 0;
-//                default -> false;
-//            };
-//
-//            if (isDirectionMatch) {
-//                int distance = distanceX * distanceX + distanceY * distanceY;
-//                if (distance < minDistance) {
-//                    minDistance = distance;
-//                    closestComponent = component;
-//                }
-//            }
-//        }
-//
-//        if (closestComponent != null) {
-//            uiComponents.get(currentActiveComponent).setActive(false);
-//            closestComponent.setActive(true);
-//            currentActiveComponent = uiComponents.indexOf(closestComponent);
-//        }
-//    }
-
-//    private void highlightActiveComponent() {
-//        logger.trace("Highlighting active component.");
-//        for (UIComponent component : uiComponents) {
-//            if (component.isActive()) {
-//                component.highlight();
-//            } else {
-//                component.resetHighlight();
-//            }
-//        }
-//    }
-//
-//    private void moveToNextActiveComponent() {
-//        if (uiComponents.isEmpty()) {
-//           logger.trace("No components to activate.");
-//            return;
-//        }
-//
-//        if (currentActiveComponent != -1) {
-//            uiComponents.get(currentActiveComponent).setActive(false);
-//           logger.trace("Deactivating current active component.");
-//        }
-//
-//        do {
-//            currentActiveComponent = (currentActiveComponent + 1) % uiComponents.size();
-//        } while (!uiComponents.get(currentActiveComponent).isInteractable());
-//
-//        uiComponents.get(currentActiveComponent).setActive(true);
-//    }
-//
-//    private void moveToPrevActiveComponent(){
-//        if (uiComponents.isEmpty()) {
-//            logger.trace("No components to activate.");
-//            return;
-//        }
-//
-//        if (currentActiveComponent != -1) {
-//            uiComponents.get(currentActiveComponent).setActive(false);
-//            logger.trace("Deactivating current active component.");
-//        }
-//        do {
-//            currentActiveComponent = (currentActiveComponent - 1);
-//            if(currentActiveComponent < 0)
-//                currentActiveComponent = uiComponents.size() - 1;
-//        } while (!uiComponents.get(currentActiveComponent).isInteractable());
-//        uiComponents.get(currentActiveComponent).setActive(true);
-//    }
-
     private void moveToNextTab() {
         if (!tabs.isEmpty()) {
             tabs.get(currentTab).setActive(false);
             currentTab = (currentTab + 1) % tabs.size();
             tabs.get(currentTab).setActive(true);
         }
+
     }
 
     private void moveToPrevTab() {
@@ -256,7 +122,18 @@ public class UIManager {
         }
     }
 
-
+    @SneakyThrows
+    public void resizeUI(int width, int height){
+        screen.resize(width, height);
+        for(UITab tab : tabs)
+            tab.windowResized(width, height);
+        if(out != null) {
+            render();
+            screen.refresh(out);
+            logger.info("Screen resized");
+        } else
+            logger.warn("OutputStream is null, not refreshing.");
+    }
     @SneakyThrows
     public void refresh() {
         logger.trace("Refreshing screen.");

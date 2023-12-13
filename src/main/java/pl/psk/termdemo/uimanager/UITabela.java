@@ -179,7 +179,6 @@ public class UITabela implements UIComponent {
         @Override
         public void show() {
             if (uiManager != null) {
-                uiManager.registerUIComponent(this);
                 uiManager.addComponentToScreen(this);
             }
         }
@@ -187,7 +186,6 @@ public class UITabela implements UIComponent {
         @Override
         public void hide() {
             if (uiManager != null) {
-                uiManager.unregisterUIComponent(this);
                 uiManager.removeComponent(this);
             }
         }
@@ -239,4 +237,9 @@ public class UITabela implements UIComponent {
         public void setBgColor(String bgColor) {this.bgColor = bgColor;}
 
         public void setTextColor(String textColor) {this.textColor = textColor;}
+
+    @Override
+    public void windowResized(int width, int height){
+
     }
+}

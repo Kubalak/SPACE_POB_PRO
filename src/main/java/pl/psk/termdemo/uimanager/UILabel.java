@@ -125,4 +125,9 @@ public class UILabel implements UIComponent{
         return false;
     }
 
+    @Override
+    public void windowResized(int width, int height){
+
+    }
+
 }

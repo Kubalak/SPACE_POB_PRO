@@ -251,4 +251,8 @@ public class UIDialogWindow implements UIComponent {
         }
     }
 
+    @Override
+    public void windowResized(int width, int height) {
+
+    }
 }

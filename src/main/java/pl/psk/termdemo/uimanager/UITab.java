@@ -84,18 +84,14 @@ public class UITab implements UIComponent {
 
     @Override
     public void show() {
-        active = true;
         if (uiManager != null) {
-            uiManager.registerUIComponent(this);
             uiManager.addComponentToScreen(this);
         }
     }
 
     @Override
     public void hide() {
-        active = false;
         if (uiManager != null) {
-            uiManager.unregisterUIComponent(this);
             uiManager.removeComponent(this);
         }
     }
@@ -247,5 +243,13 @@ public class UITab implements UIComponent {
         } while (!components.get(currentActiveComponent).isInteractable() && currentActiveComponent != startComponent);
 
         components.get(currentActiveComponent).setActive(true);
+    }
+
+    @Override
+    public void windowResized(int width, int height){
+        this.w = width;
+        this.h = height;
+        for(UIComponent component : components)
+            component.windowResized(width, height);
     }
 }

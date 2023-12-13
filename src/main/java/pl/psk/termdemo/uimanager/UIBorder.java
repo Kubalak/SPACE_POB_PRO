@@ -15,6 +15,7 @@ public class UIBorder implements UIComponent {
     private static final char BOTTOM_RIGHT_CORNER = '┘';
 
     private int x, y, width, height;
+    private final int initialH, initialW;
     private int zIndex;
     private String bgColor = ANSIColors.BG_BLUE.getCode();
     private String textColor = ANSIColors.TEXT_WHITE.getCode();
@@ -27,8 +28,8 @@ public class UIBorder implements UIComponent {
     public UIBorder(int x, int y, int width, int height, int zIndex, UIManager uiManager) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = this.initialW = width;
+        this.height = this.initialH = height;
         this.zIndex = zIndex;
         this.uiManager = uiManager;
     }
@@ -36,8 +37,8 @@ public class UIBorder implements UIComponent {
     public UIBorder(int x, int y, int width, int height, int zIndex, UIManager uiManager, String textContent) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = this.initialW = width;
+        this.height = this.initialH = height;
         this.zIndex = zIndex;
         this.uiManager = uiManager;
         this.textContent = textContent;
@@ -64,6 +65,7 @@ public class UIBorder implements UIComponent {
             screen.addPixelToLayer(i, y, zIndex, new ScreenCell(HORIZONTAL_BORDER, textColor, bgColor));
             screen.addPixelToLayer(i, y + height - 1, zIndex, new ScreenCell(HORIZONTAL_BORDER, textColor, bgColor));
         }
+        // logger.trace("Max index on draw \033[35m{}\033[0m", x + width - 1 );
         for (int i = y; i < y + height; i++) {
             screen.addPixelToLayer(x, i, zIndex, new ScreenCell(VERTICAL_BORDER, textColor, bgColor));
             screen.addPixelToLayer(x + width - 1, i, zIndex, new ScreenCell(VERTICAL_BORDER, textColor, bgColor));
@@ -140,5 +142,19 @@ public class UIBorder implements UIComponent {
     @Override
     public int getZIndex() {
         return zIndex;
+    }
+
+    @Override
+    public void windowResized(int width, int height){
+        if(width < (x + this.width))
+            this.width += width - (this.width + x);
+        else if(width != (x + this.width))
+            this.width = Math.min(width - x, initialW);
+        if(height < (y + this.height))
+            this.height += height - (this.height + y);
+        else if (height != (y + this.height))
+            this.height = Math.min(height - y, initialH);
+
+        logger.trace("\033[32mNew border size is {}x{}\033[0m", this.width, this.height);
     }
 }

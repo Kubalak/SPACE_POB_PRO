@@ -22,4 +22,6 @@ public interface UIComponent {
     void highlight();
     void resetHighlight();
     boolean isInteractable();
+
+    void windowResized(int width, int height);
 }

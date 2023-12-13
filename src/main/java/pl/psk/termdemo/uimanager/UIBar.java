@@ -136,4 +136,9 @@ public class UIBar implements UIComponent {
     public void performAction() {
         // TUIBar does not have any action, so this method does nothing
     }
+
+    @Override
+    public void windowResized(int width, int height){
+
+    }
 }

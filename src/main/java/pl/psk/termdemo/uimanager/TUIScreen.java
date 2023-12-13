@@ -19,8 +19,8 @@ public class TUIScreen {
     /**
      * The width and height of the screen.
      */
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
 
     /**
      * The layers of the screen.
@@ -30,7 +30,7 @@ public class TUIScreen {
     /**
      * The merged layer of the screen.
      */
-    private final ScreenCell[][] mergedLayer;
+    private ScreenCell[][] mergedLayer;
 
     /**
      * Creates a new screen with the specified width and height.
@@ -208,7 +208,7 @@ public class TUIScreen {
      * Renders the screen.
      * @return The rendered screen.
      */
-    public String render() {
+    private String render() {
         logger.trace("Rendering screen");
         long start = System.nanoTime();
         StringBuilder sb = new StringBuilder();
@@ -251,6 +251,18 @@ public class TUIScreen {
             return layers.get(zIndex)[y][x];
         }
         return null;
+    }
+
+    public void resize(int width, int height){
+        this.width = width;
+        this.height = height;
+        mergedLayer = new ScreenCell[height][width];
+        List<Integer> keys = layers.keySet().stream().toList();
+        layers.clear();
+        for(Integer key : keys )
+            layers.put(key, new ScreenCell[height][width]);
+
+        clearScreen();
     }
 
 

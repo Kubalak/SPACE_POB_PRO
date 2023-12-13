@@ -132,7 +132,7 @@ class VT100ClientHandler extends Thread {
     private TUIScreen tuiScreen;
     private UIManager uiManager;
     private int ScreenWidth = 80;
-    private int ScreenHeight = 50;
+    private int ScreenHeight = 24;
 
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
@@ -177,9 +177,9 @@ class VT100ClientHandler extends Thread {
             tuiScreen.addLayer(2);
             tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
             UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
-            UITab tab3 = new UITab("Third table page", 10,0,ScreenWidth, ScreenHeight, 0 , uiManager);
+            UITab tab3 = new UITab("Third table page", 15,0,ScreenWidth, ScreenHeight, 0 , uiManager);
 
-            UIBorder border = new UIBorder(0, 1, ScreenWidth, ScreenHeight - 1, 0, uiManager);
+            UIBorder border = new UIBorder(1, 1, ScreenWidth - 1, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
             border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
             final String name = "Term emu v0.1";
@@ -189,9 +189,6 @@ class VT100ClientHandler extends Thread {
             UITextField field = new UITextField(1, 3, 15, 1, 0, uiManager);
             UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField passField = new UITextField(1, 5, 15, 1, 0, uiManager);
-            UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2,ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel label = new UILabel("Press arrow down to activate next field.", 1,2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField field = new UITextField(1,3,15,1,0,uiManager);
 
 
             List<String> rowContents = new ArrayList<>();
@@ -201,13 +198,13 @@ class VT100ClientHandler extends Thread {
             rowContents.add("2");
             rowContents.add("testdwa");
             rowContents.add("2773");
-//            rowContents.add("3");
-//            rowContents.add("niewiem");
-//            rowContents.add("2115");
-//            rowContents.add("4");
-//            rowContents.add("niewiem");
-//            rowContents.add("2115");
-
+////            rowContents.add("3");
+////            rowContents.add("niewiem");
+////            rowContents.add("2115");
+////            rowContents.add("4");
+////            rowContents.add("niewiem");
+////            rowContents.add("2115");
+//
             List<String> newLabes = new ArrayList<>();
             newLabes.add("ID");
             newLabes.add("Nazwa");
@@ -221,9 +218,6 @@ class VT100ClientHandler extends Thread {
             tabelaFinal.drawAllRows(tab3);
 
             //koniec tabela
-
-            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1,4,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField passField = new UITextField(1,5,15,1,0,uiManager);
             passField.setNumeric(true);
             UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 1, 6, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
@@ -235,10 +229,6 @@ class VT100ClientHandler extends Thread {
             window.setMessage("I ate your grandma");
             UIComboBox uiComboBox = new UIComboBox(10, 15, 15, 5, 0, uiManager, List.of("Daniel", "Kuba", "Patryk"));
 
-
-            UITab tab2 = new UITab("Second", 5,0,ScreenWidth, ScreenHeight, 0 , uiManager);
-            UILabel tab2label = new UILabel("Label for second tab", 1,2,0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.",1,3,0,ANSIColors.BG_BRIGHT_BLUE.getCode(),uiManager);
 
 
             tab1.addComponent(border);
@@ -256,7 +246,7 @@ class VT100ClientHandler extends Thread {
             tab2.addComponent(window);
             tab2.addComponent(uiComboBox);
 
-            tab3.addComponent(tabelaFinal);
+//            tab3.addComponent(tabelaFinal);
 
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
@@ -397,6 +387,7 @@ class VT100ClientHandler extends Thread {
                 } else if (intData.length == 9) {
                     if (intData[0] == App.IAC && intData[1] == App.IAC_SB) {
                         updateWindowSize(bytes, 0);
+                        uiManager.resizeUI(ScreenWidth, ScreenHeight);
                     } else {
                         logger.warn("Nieznana sekwencja: " + Arrays.toString(intData));
                     }
@@ -415,10 +406,6 @@ class VT100ClientHandler extends Thread {
 
             int button = cb & MOUSE_BUTTON_MASK; // Extracting least significant 2 bits
             String buttonStr = decodeMouseButton(button);
-
-            if (button == 0 || button == 1 || button == 2) {
-                uiManager.handleMouseClick(x, y);
-            }
 
             logger.info("Pozycja myszy: X=" + x + ", Y=" + y + ", Przycisk: " + buttonStr);
         }

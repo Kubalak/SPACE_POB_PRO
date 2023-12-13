@@ -91,7 +91,6 @@ public class UIButton implements UIComponent {
     @Override
     public void show() {
         if (uiManager != null) {
-            uiManager.registerUIComponent(this);
             uiManager.addComponentToScreen(this);
         }
     }
@@ -99,7 +98,6 @@ public class UIButton implements UIComponent {
     @Override
     public void hide() {
         if (uiManager != null) {
-            uiManager.unregisterUIComponent(this);
             uiManager.removeComponent(this);
         }
     }
@@ -182,5 +180,10 @@ public class UIButton implements UIComponent {
 
     public void setTextColor(String textColor) {
         this.textColor = textColor;
+    }
+
+    @Override
+    public void windowResized(int width, int height){
+
     }
 }
