@@ -179,6 +179,9 @@ class VT100ClientHandler extends Thread {
             UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
             UITab tab3 = new UITab("Third table page", 15,0,ScreenWidth, ScreenHeight, 0 , uiManager);
 
+            //tab do list
+            UITab tab4 = new UITab("List view", 35,0,ScreenWidth, ScreenHeight, 0 , uiManager);
+
             UIBorder border = new UIBorder(1, 1, ScreenWidth - 1, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
             border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
@@ -248,10 +251,21 @@ class VT100ClientHandler extends Thread {
 
 //            tab3.addComponent(tabelaFinal);
 
+            //Proba listy
+            List<String> listComponents = new ArrayList<>();
+            listComponents.add("Komponent 1");
+            listComponents.add("Komponent 2");
+            listComponents.add("Komponent 3");
+
+            UIList listInTabElement = new UIList(5, 5,0, uiManager, listComponents);
+            listInTabElement.setListElementsMargin(3);
+            listInTabElement.drawList(tab4);
+
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
 
             uiManager.addTab(tab3);
+            uiManager.addTab(tab4);
 
             uiManager.render();
             uiManager.refresh();
