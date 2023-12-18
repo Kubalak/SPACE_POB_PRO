@@ -134,7 +134,6 @@ public class UITab implements UIComponent {
         textColor = ANSIColors.TEXT_RED.getCode();
         active = true;
 
-        uiManager.render();
         uiManager.refresh();
 
     }
@@ -143,7 +142,6 @@ public class UITab implements UIComponent {
         textColor = ANSIColors.TEXT_WHITE.getCode();
         active = false;
 
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -172,7 +170,7 @@ public class UITab implements UIComponent {
                 }
                 moveToPrevActiveComponent();
                 break;
-            case ENTER:
+            case ENTER, ENTER_ALT:
                 if (active && currentActiveComponent != -1 && components.get(currentActiveComponent) instanceof UIComboBox comboBox) {
                     if (comboBox.isExpanded())
                         comboBox.confirmSelection();

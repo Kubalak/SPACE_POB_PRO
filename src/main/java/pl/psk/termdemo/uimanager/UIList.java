@@ -3,11 +3,8 @@ package pl.psk.termdemo.uimanager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.psk.termdemo.model.color.ANSIColors;
-import pl.psk.termdemo.model.keys.KeyInfo;
-import pl.psk.termdemo.model.keys.KeyLabel;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class UIList implements UIComponent {
 
@@ -50,7 +47,6 @@ public class UIList implements UIComponent {
     //nieuzywane, ale odswieza menadżera rysowania (funkcja pomocnicza żeby cały czas tego nie pisać)
     public void refresh() {
         if (uiManager != null) {
-            uiManager.render();
             uiManager.refresh();
         }
     }
@@ -148,7 +144,6 @@ public class UIList implements UIComponent {
         setBgColor(ANSIColors.BG_YELLOW.getCode());
         setTextColor(ANSIColors.TEXT_BLACK.getCode());
 
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -157,7 +152,6 @@ public class UIList implements UIComponent {
         setBgColor(ANSIColors.BG_RED.getCode());
         setTextColor(ANSIColors.TEXT_WHITE.getCode());
 
-        uiManager.render();
         uiManager.refresh();
     }
 

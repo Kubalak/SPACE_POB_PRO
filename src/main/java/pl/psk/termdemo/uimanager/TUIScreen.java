@@ -83,7 +83,7 @@ public class TUIScreen {
      * @param zIndex The z-index of the cell.
      */
     public void clearCellAt(int x, int y, int zIndex) {
-        if(x >= width || y >= height){
+        if(x >= width || y >= height || x < 0 || y < 0){
             logger.warn("\033[33mInvalid position set for pixel {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
             return;
         }
@@ -102,15 +102,6 @@ public class TUIScreen {
         ensureLayerExists(zIndex);
     }
 
-    /**
-     * Removes the layer with the specified z-index.
-     * @param zIndex The z-index of the layer.
-     */
-//    public void removeLayer(int zIndex) {
-//        logger.trace("Removing layer with z-index {}", zIndex);
-//        layers.remove(zIndex);
-//        mergeLayers();
-//    }
 
     /**
      * Adds a pixel to the layer with the specified z-index.
@@ -121,7 +112,7 @@ public class TUIScreen {
      */
     public void addPixelToLayer(int x, int y, int zIndex, ScreenCell cell) {
 //        logger.trace("Adding cell at ({}, {}) with z-index {}", x, y, zIndex);
-        if(x >= width || y >= height){
+        if(x >= width || y >= height || x < 0 || y < 0){
             logger.warn("\033[33mInvalid position set for pixel {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
             return;
         }
@@ -129,21 +120,6 @@ public class TUIScreen {
         layers.get(zIndex)[y][x] = cell;
         // mergeLayers();
     }
-
-    /**
-     * Updates a pixel in the layer with the specified z-index.
-     * @param x The x position of the pixel.
-     * @param y The y position of the pixel.
-     * @param zIndex The z-index of the layer.
-     * @param cell The cell to add.
-     */
-//    public void updatePixelInLayer(int x, int y, int zIndex, ScreenCell cell) {
-//        logger.trace("Updating cell at ({}, {}) with z-index {}", x, y, zIndex);
-//        if (layers.containsKey(zIndex)) {
-//            layers.get(zIndex)[y][x] = cell;
-//            mergeLayers();
-//        }
-//    }
 
     /**
      * Clears the screen.
@@ -168,7 +144,7 @@ public class TUIScreen {
      */
     public void setText(int x, int y, String text, String textColor, String bgColor, int zIndex) {
         logger.trace("Setting text at ({}, {}) with z-index {}", x, y, zIndex);
-        if(x >= width || y  >= height){
+        if(x >= width || y  >= height || x < 0 || y < 0){
             logger.warn("\033[33mInvalid position set for text {} {} (max: {}, {})\033[0m", x, y, width - 1, height - 1);
             return;
         }

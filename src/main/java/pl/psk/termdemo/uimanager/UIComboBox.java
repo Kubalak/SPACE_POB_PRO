@@ -44,7 +44,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         if (isExpanded) {
             highlightIndex = selectedIndex;
         }
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -54,7 +53,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
             selectedIndex = highlightIndex;
             toggleExpand();
         }
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -104,7 +102,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         } else {
             toggleExpand();
         }
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -175,7 +172,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         isActive = false;
         resetHighlight();
         uiManager.setCurrentActiveComponent(-1);
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -188,7 +184,6 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
                 selectedOption = Math.min(items.size() - 1, selectedOption + 1);
             }
         }
-        uiManager.render();
         uiManager.refresh();
     }
 
@@ -197,27 +192,23 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         if (isExpanded) {
             switch (keyInfo.getLabel()) {
                 case ARROW_UP, ARROW_DOWN -> navigateOption(keyInfo.getLabel());
-                case ENTER -> {
+                case ENTER, ENTER_ALT -> {
                     confirmSelection();
-                    uiManager.render(); // Odświeżamy tu, aby od razu ukryć listę
                     uiManager.refresh();
                     uiManager.setCurrentActiveComponent(-1); // Uwalniamy focus z tego elementu
                 }
                 case ESC -> {
                     isExpanded = false;  // Anulujemy i zamykamy combobox
-                    uiManager.render(); // Odświeżamy tu, aby od razu ukryć listę
                     uiManager.refresh();
                     uiManager.setCurrentActiveComponent(-1);  // Uwalniamy focus z tego elementu
                 }
             }
         } else {
-            if (keyInfo.getLabel() == KeyLabel.ENTER) {
+            if (keyInfo.getLabel() == KeyLabel.ENTER || keyInfo.getLabel() == KeyLabel.ENTER_ALT) {
                 performAction(); // Otwarcie lub zamknięcie comboboxa
-                uiManager.render(); // Odświeżamy tu, aby od razu pokazać listę
                 uiManager.refresh();
             }
         }
-        uiManager.render();
         uiManager.refresh();
     }
 

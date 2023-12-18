@@ -146,7 +146,6 @@ public class UIButton implements UIComponent {
             setBgColor(ANSIColors.BG_YELLOW.getCode());
             setTextColor(ANSIColors.TEXT_BLACK.getCode());
 
-            uiManager.render();
             uiManager.refresh();
     }
 
@@ -155,7 +154,6 @@ public class UIButton implements UIComponent {
         setBgColor(ANSIColors.BG_RED.getCode());
         setTextColor(ANSIColors.TEXT_WHITE.getCode());
 
-        uiManager.render();
         uiManager.refresh();
     }
 

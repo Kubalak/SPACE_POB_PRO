@@ -34,6 +34,10 @@ public class KeyboardHandler {
         addKey(new KeyInfo(KeyLabel.CTRL_ARROW_RIGHT), 27, 79, 67);
         addKey(new KeyInfo(KeyLabel.ARROW_LEFT), 27, 91, 68);
         addKey(new KeyInfo(KeyLabel.CTRL_ARROW_LEFT), 27, 79, 68);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_RIGHT_ALT), 27, 91, 49, 59, 53, 67);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_LEFT_ALT), 27, 91, 49, 59, 53, 68);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_UP_ALT),27, 91, 49, 59, 53, 65);
+        addKey(new KeyInfo(KeyLabel.CTRL_ARROW_DOWN_ALT),27, 91, 49, 59, 53, 66);
         addKey(new KeyInfo(KeyLabel.F1), 27, 79, 80);
         addKey(new KeyInfo(KeyLabel.F2), 27, 79, 81);
         addKey(new KeyInfo(KeyLabel.F3), 27, 79, 82);
@@ -47,6 +51,7 @@ public class KeyboardHandler {
         addKey(new KeyInfo(KeyLabel.F11), 27, 91, 50, 51, 126);
         addKey(new KeyInfo(KeyLabel.F12), 27, 91, 50, 52, 126);
         addKey(new KeyInfo(KeyLabel.ENTER), 13, 10);
+        addKey(new KeyInfo(KeyLabel.ENTER_ALT), 13);
         addKey(new KeyInfo(KeyLabel.CTRL_B), 2);
         addKey(new KeyInfo(KeyLabel.CTRL_C), 3);
         addKey(new KeyInfo(KeyLabel.CTRL_F), 6);
@@ -56,7 +61,7 @@ public class KeyboardHandler {
         addKey(new KeyInfo(KeyLabel.CTRL_J), 10);
         addKey(new KeyInfo(KeyLabel.CTRL_K), 11);
         addKey(new KeyInfo(KeyLabel.CTRL_L), 12);
-        addKey(new KeyInfo(KeyLabel.CTRL_M), 13);
+        // addKey(new KeyInfo(KeyLabel.CTRL_M), 13); // Overlaps with Enter
         addKey(new KeyInfo(KeyLabel.CTRL_N), 14);
         addKey(new KeyInfo(KeyLabel.CTRL_O), 15);
         addKey(new KeyInfo(KeyLabel.CTRL_P), 16);

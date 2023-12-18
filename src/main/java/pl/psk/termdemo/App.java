@@ -267,8 +267,7 @@ class VT100ClientHandler extends Thread {
             uiManager.addTab(tab3);
             uiManager.addTab(tab4);
 
-            uiManager.render();
-            uiManager.refresh();
+            uiManager.initialize();
         } catch (Exception e) {
             logger.error("Błąd połączenia" + e.getMessage());
         }

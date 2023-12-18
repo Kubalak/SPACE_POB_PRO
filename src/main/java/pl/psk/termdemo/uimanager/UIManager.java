@@ -30,12 +30,19 @@ public class UIManager {
 
     private int currentTab = 0;
 
+    private boolean shouldRefresh;
+
     public UIManager(TUIScreen screen, OutputStream out) {
         logger.trace("Constructor UIManager with screen and out");
         this.screen = screen;
         this.out = out;
+        this.shouldRefresh = true;
     }
 
+    public void initialize(){
+        this.shouldRefresh = true;
+        render();
+    }
 
     public void addComponentToScreen(UIComponent component) {
         logger.trace("Adding UI component to screen: " + component.getClass().getSimpleName());
@@ -54,13 +61,22 @@ public class UIManager {
         tabs.remove(tab);
     }
 
-    public void render() {
-        logger.trace("Rendering UI components.");
-        screen.clearScreen();
-        for (List<UIComponent> layer : layers.values()) {
-            for (UIComponent component : layer) {
-                component.draw(this);
+    @SneakyThrows
+    private void render() {
+        if(shouldRefresh) {
+            logger.trace("Rendering UI components.");
+            for (List<UIComponent> layer : layers.values()) {
+                for (UIComponent component : layer) {
+                    component.draw(this);
+                }
             }
+            logger.trace("Refreshing screen.");
+            if (out != null) {
+                screen.refresh(this.out);
+            } else {
+                logger.warn("OutputStream is null, skipping refresh.");
+            }
+            shouldRefresh = false;
         }
     }
 
@@ -91,10 +107,10 @@ public class UIManager {
 
         // Standards logic for navigation and activation
         switch (keyInfo.getLabel()) {
-            case CTRL_ARROW_RIGHT:
+            case CTRL_ARROW_RIGHT, CTRL_ARROW_RIGHT_ALT:
                 moveToNextTab();
                 break;
-            case CTRL_ARROW_LEFT:
+            case CTRL_ARROW_LEFT, CTRL_ARROW_LEFT_ALT:
                 moveToPrevTab();
                 break;
             default:
@@ -102,6 +118,9 @@ public class UIManager {
                     tabs.get(currentTab).handleKeyboard(keyInfo);
                 break;
         }
+
+        if(shouldRefresh)
+            this.render();
     }
 
     private void moveToNextTab() {
@@ -128,20 +147,15 @@ public class UIManager {
         for(UITab tab : tabs)
             tab.windowResized(width, height);
         if(out != null) {
+            shouldRefresh = true;
             render();
-            screen.refresh(out);
             logger.info("Screen resized");
         } else
             logger.warn("OutputStream is null, not refreshing.");
     }
     @SneakyThrows
     public void refresh() {
-        logger.trace("Refreshing screen.");
-        if (out != null) {
-            screen.refresh(this.out);
-        } else {
-            logger.warn("OutputStream is null, skipping refresh.");
-        }
+        this.shouldRefresh = true;
     }
 
 }
