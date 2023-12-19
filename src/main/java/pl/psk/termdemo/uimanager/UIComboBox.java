@@ -152,11 +152,13 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
     @Override
     public void highlight() {
         this.bgColor = ANSIColors.BG_YELLOW.getCode();
+        uiManager.refresh();
     }
 
     @Override
     public void resetHighlight() {
         this.bgColor = ANSIColors.BG_BLUE.getCode();
+        uiManager.refresh();
     }
 
     @Override
