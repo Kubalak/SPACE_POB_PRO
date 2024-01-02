@@ -38,13 +38,13 @@ public class UIButton implements UIComponent {
 
 
 
-    public UIButton(int zIndex, String text, Runnable action, UIManager uiManager) {
-        this.text = text;
-        this.action = action;
-        this.uiManager = uiManager;
-        this.zIndex = zIndex;
-        this.uiManager = uiManager;
-    }
+//    public UIButton(int zIndex, String text, Runnable action, UIManager uiManager) {
+//        this.text = text;
+//        this.action = action;
+//        this.uiManager = uiManager;
+//        this.zIndex = zIndex;
+//        this.uiManager = uiManager;
+//    }
 
     public void setPositionAndSize(int x, int y, int width, int height) {
         this.x = x;
@@ -85,7 +85,10 @@ public class UIButton implements UIComponent {
 
     @Override
     public void performAction() {
-
+        // Wywołaj przekazaną akcję
+        if (action != null) {
+            action.run();
+        }
     }
 
     @Override

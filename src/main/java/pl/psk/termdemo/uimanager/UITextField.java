@@ -55,6 +55,12 @@ public class UITextField implements UIComponent {
         return textContent.toString();
     }
 
+    public double getNumber(){try {
+        return Double.parseDouble(textContent.toString());
+    } catch (NumberFormatException e) {
+        return 0;
+    } }
+
     @Override
     public void draw(UIManager uiManager) {
 

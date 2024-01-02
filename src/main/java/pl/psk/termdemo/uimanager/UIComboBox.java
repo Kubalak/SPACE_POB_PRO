@@ -139,6 +139,10 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         return isExpanded ? height + items.size() : height;
     }
 
+    public String getSelectedValue() {
+        return items.get(selectedIndex);
+    }
+
     @Override
     public void setActive(boolean active) {
         this.isActive = active;
@@ -168,7 +172,7 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
 
     public void confirmSelection() {
         logger.info("Confirming selection");
-        logger.error("Selected index: {}", items.get(selectedOption));
+        logger.info("Selected index: {}", items.get(selectedOption));
         isExpanded = false;
         selectedIndex = selectedOption;
         isActive = false;

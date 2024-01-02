@@ -5,6 +5,8 @@ import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.psk.termdemo.model.color.ANSIColors;
@@ -12,9 +14,10 @@ import pl.psk.termdemo.model.keys.KeyInfo;
 import pl.psk.termdemo.model.keys.KeyboardHandler;
 import pl.psk.termdemo.uimanager.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,11 +55,11 @@ public class VT100SSHClientHandler implements Command {
             tuiScreen.addLayer(1);
             tuiScreen.addLayer(2);
             tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
-            UITab tab1 = new UITab("1", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
-            UITab tab3 = new UITab("Third table page", 15, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab1 = new UITab("Algo 5", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab3 = new UITab("Algo 3", 20, 0, ScreenWidth, ScreenHeight, 0, uiManager);
 
             //tab do list
-            UITab tab4 = new UITab("List view", 35, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab4 = new UITab("List view", 40, 0, ScreenWidth, ScreenHeight, 0, uiManager);
 
             UIBorder border = new UIBorder(1, 1, ScreenWidth - 1, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
@@ -64,10 +67,11 @@ public class VT100SSHClientHandler implements Command {
             final String name = "Term emu v0.1";
             // zIndex na 1 wyświetla 1 poziom wyżej. (BUG?)
             UILabel title = new UILabel(name, (ScreenWidth - name.length()) / 2, ScreenHeight - 1, 1, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel label = new UILabel("Press arrow down to activate next field.", 1, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField field = new UITextField(1, 3, 15, 1, 0, uiManager);
-            UILabel passLabel = new UILabel("Press arrow down again to activate next component - numeric input", 1, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UITextField passField = new UITextField(1, 5, 15, 1, 0, uiManager);
+            UILabel label = new UILabel("Press arrow down to activate next field, and input planet name.", 3, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField planetInput = new UITextField(3, 3, 15, 1, 0, uiManager);
+            UILabel weightLabel = new UILabel("Press arrow down again to activate next component - numeric input", 3, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField weightInput = new UITextField(3, 5, 15, 1, 0, uiManager);
+            weightInput.setNumeric(true);
 
 
             List<String> rowContents = new ArrayList<>();
@@ -87,36 +91,201 @@ public class VT100SSHClientHandler implements Command {
             UITabela tabelaFinal = new UITabela(5, 5, 30, 10, 0, uiManager, newLabes, rowContents);
 
             //tu sie rysuje
-            tabelaFinal.drawAllHeaders(tab3);
-            tabelaFinal.drawAllRows(tab3);
+//            tabelaFinal.drawAllHeaders(tab3);
+//            tabelaFinal.drawAllRows(tab3);
 
             //koniec tabela
-            passField.setNumeric(true);
-            UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 1, 6, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 2, 28, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
 
-            UITab tab2 = new UITab("Second", 5, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab2 = new UITab("Algo 1", 10, 0, ScreenWidth, ScreenHeight, 0, uiManager);
             UILabel tab2label = new UILabel("Label for second tab", 1, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.", 1, 3, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UIDialogWindow window = new UIDialogWindow(1, 4, 15, 5, 0, "A dialog", uiManager);
-            window.setMessage("I ate your grandma");
-            UIComboBox uiComboBox = new UIComboBox(10, 15, 15, 5, 0, uiManager, List.of("Daniel", "Kuba", "Patryk"));
+            UILabel infoLabel2 = new UILabel("Use CTRL + ARROW_LEFT to move to previous tab.", 2, 27, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UIComboBox comboBox= new UIComboBox(2, 2, 15, 5, 0, uiManager, List.of("Ziemia", "Mars", "Jowisz", "Wenus", "Merkury", "Saturn", "Uran", "Neptun", "Pluton"));
+            // Display the velocities in a UILabel
 
+
+            // ALGO 5
+            UIButton apiButton = new UIButton(
+                    2, 4, 15, 5, 0, "Calculate space Velocities",
+                    () -> {
+                        try {
+                            //String fieldValue = field.getText(); // Example: Text from the 'field' UITextField
+                            String fieldValue = comboBox.getSelectedValue();
+
+                            JSONObject requestData = new JSONObject();
+                            requestData.put("body_name", fieldValue);
+                            // Include other fields as needed in the JSON request data
+
+                            URL url = new URL("http://127.0.0.1:5000/space_velocities");
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setRequestMethod("POST");
+                            connection.setRequestProperty("Content-Type", "application/json");
+                            connection.setDoOutput(true);
+
+                            // Send JSON data from the form
+                            DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                            wr.write(requestData.toString().getBytes(StandardCharsets.UTF_8));
+                            wr.flush();
+                            wr.close();
+
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            StringBuilder response = new StringBuilder();
+                            String inputLine;
+                            while ((inputLine = in.readLine()) != null) {
+                                response.append(inputLine);
+                            }
+                            in.close();
+
+                            // Process the response JSON and display in a UILabel
+                            JSONObject jsonResponse = new JSONObject(response.toString());
+                            double firstVelocity = jsonResponse.getDouble("first_velocity");
+                            double secondVelocity = jsonResponse.getDouble("second_velocity");
+
+                            // Handle the response or trigger actions based on the received data
+                            UILabel velocitiesLabel = new UILabel("First Velocity: " + firstVelocity + ", Second Velocity: " + secondVelocity, 15, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+                            tab1.addComponent(velocitiesLabel);
+
+                        } catch (IOException e) {
+                            // Handle any IO-related exceptions (e.g., network issues, connection problems)
+                            // Log the exception or perform error handling as needed
+                            e.printStackTrace(); // Print the stack trace for debugging purposes
+                        } catch (JSONException e) {
+                            // Handle JSON-related exceptions (e.g., parsing errors)
+                            // Log the exception or perform error handling as needed
+                            e.printStackTrace(); // Print the stack trace for debugging purposes
+                        } catch (Exception e) {
+                            // Handle other types of exceptions
+                            // Log the exception or perform error handling as needed
+                            e.printStackTrace(); // Print the stack trace for debugging purposes
+                        }
+                    },
+                    uiManager
+            );
+
+            UIButton distanceButton = new UIButton(
+                    3, 5, 15, 5, 0, "Calculate Distance",
+                    () -> {
+                        try {
+                            String planetName = planetInput.getText(); // Example: You can change this to the desired planet name
+
+                            JSONObject requestData = new JSONObject();
+                            requestData.put("planet_name", planetName);
+
+                            URL url = new URL("http://127.0.0.1:5000/distance/" + planetName.toLowerCase());
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setRequestMethod("GET");
+                            connection.setRequestProperty("Content-Type", "application/json");
+                            connection.setDoOutput(true);
+
+                            // Send GET request to the server
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            StringBuilder response = new StringBuilder();
+                            String inputLine;
+                            while ((inputLine = in.readLine()) != null) {
+                                response.append(inputLine);
+                            }
+                            in.close();
+
+                            // Handle the response from the server
+                            JSONObject jsonResponse = new JSONObject(response.toString());
+                            double distanceKm = jsonResponse.getDouble("distance_km");
+                            double distanceAu = jsonResponse.getDouble("distance_au");
+
+                            UILabel distances = new UILabel("distance_km: " + distanceKm + ", distance_au: " + distanceAu, 3, 7, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+                            tab2.addComponent(distances);
+
+
+                        } catch (IOException e) {
+                            // Handle exceptions
+                            e.printStackTrace();
+                        }
+                    },
+                    uiManager
+            );
+
+            UIButton weightButton = new UIButton(
+                    3, 7, 15, 5, 0, "Calculate Weight",
+                    () -> {
+                        try {
+                            String planet = planetInput.getText();
+                            double weightOnEarth = weightInput.getNumber(); // Example: You can change this to the weight on Earth
+
+                            JSONObject requestData = new JSONObject();
+                            requestData.put("weight_on_earth", weightOnEarth);
+                            requestData.put("planet", planet); // Example: You can change this to the desired planet
+
+                            URL url = new URL("http://127.0.0.1:5000/calculate_weight");
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setRequestMethod("POST");
+                            connection.setRequestProperty("Content-Type", "application/json");
+                            connection.setDoOutput(true);
+
+                            // Send JSON data to the server
+                            OutputStream os = connection.getOutputStream();
+                            os.write(requestData.toString().getBytes(StandardCharsets.UTF_8));
+                            os.flush();
+                            os.close();
+
+                            // Handle the response from the server
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            StringBuilder response = new StringBuilder();
+                            String inputLine;
+                            while ((inputLine = in.readLine()) != null) {
+                                response.append(inputLine);
+                            }
+                            in.close();
+
+                            // Process the response JSON and display the calculated weight on the planet
+                            JSONObject jsonResponse = new JSONObject(response.toString());
+                            double weightOnPlanet = jsonResponse.getDouble("weight_on_planet");
+                            System.out.println("Weight on Planet: " + weightOnPlanet);
+
+//                            UILabel weight = new UILabel("Weight on planet: " + weightOnPlanet, 1, 7, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+//                            tab3.addComponent(weight);
+                            UIDialogWindow dialog = new UIDialogWindow(25, 10, 40, 10, 0, "Attention", uiManager);
+                            dialog.setMessage("Weight on planet: " + weightOnPlanet);
+                            tab3.addComponent(dialog);
+
+                        } catch (IOException e) {
+                            // Handle exceptions
+                            e.printStackTrace();
+                        }
+                    },
+                    uiManager
+            );
 
             tab1.addComponent(border);
             tab1.addComponent(title);
-            tab1.addComponent(label);
-            tab1.addComponent(field);
-            tab1.addComponent(passLabel);
-            tab1.addComponent(passField);
+           //tab1.addComponent(label);
+            //tab1.addComponent(field);
+            //tab1.addComponent(passLabel);
+            //tab1.addComponent(passField);
             tab1.addComponent(infoLabel);
+            tab1.addComponent(infoLabel2);
+            tab1.addComponent(apiButton);
+            tab1.addComponent(comboBox);
 
-
-            tab2.addComponent(tab2label);
+            //tab2.addComponent(tab2label);
+            //tab2.addComponent(infoLabel2);
+            //tab2.addComponent(window);
+            tab2.addComponent(infoLabel);
             tab2.addComponent(infoLabel2);
-            tab2.addComponent(window);
-            tab2.addComponent(uiComboBox);
+            tab2.addComponent(border);
+            tab2.addComponent(label);
+            tab2.addComponent(planetInput);
+            tab2.addComponent(distanceButton);
 
+
+//            tab2.addComponent(uiComboBox);
+            tab3.addComponent(infoLabel);
+            tab3.addComponent(infoLabel2);
+            tab3.addComponent(border);
+            tab3.addComponent(label);
+            tab3.addComponent(planetInput);
+            tab3.addComponent(weightLabel);
+            tab3.addComponent(weightInput);
+            tab3.addComponent(weightButton);
 //            tab3.addComponent(tabelaFinal);
 
             //Proba listy
