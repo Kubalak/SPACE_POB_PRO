@@ -183,6 +183,7 @@ public class KeyboardHandler {
         addKey(new KeyInfo(KeyLabel.FUN_END), 27, 91, 70);
         addKey(new KeyInfo(KeyLabel.FUN_PAGE_UP), 27, 91, 53, 126);
         addKey(new KeyInfo(KeyLabel.FUN_PAGE_DOWN), 27, 91, 54, 126);
+        addKey(new KeyInfo(KeyLabel.INTERNAL_WIN_RESIZE), 255,255,0,255,255);
 
     }
 

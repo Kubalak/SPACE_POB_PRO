@@ -160,5 +160,6 @@ public enum KeyLabel {
     FUN_PAGE_UP,
     FUN_PAGE_DOWN,
     FUN_DELETE,
-    FUN_END
+    FUN_END,
+    INTERNAL_WIN_RESIZE
 }

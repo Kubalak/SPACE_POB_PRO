@@ -1,8 +1,11 @@
 package  pl.psk.termdemo.ssh;
 
 
+import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.Signal;
+import org.apache.sshd.server.SignalListener;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
 import org.json.JSONException;
@@ -11,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.psk.termdemo.model.color.ANSIColors;
 import pl.psk.termdemo.model.keys.KeyInfo;
+import pl.psk.termdemo.model.keys.KeyLabel;
 import pl.psk.termdemo.model.keys.KeyboardHandler;
 import pl.psk.termdemo.uimanager.*;
 
@@ -353,6 +357,16 @@ public class VT100SSHClientHandler implements Command {
         this.environment = environment;
 
         Map<String, String> env = environment.getEnv();
+        this.environment.addSignalListener(new SignalListener() {
+            @Override
+            public void signal(Channel channel, Signal signal) {
+                try {
+                    messages.put(new byte[]{(byte) 255, (byte) 255, (byte) 0, (byte) 255, (byte) 255});
+                } catch (Exception e){
+                    logger.error(e.getMessage());
+                }
+            }
+        }, Signal.WINCH);
 
         try {
             this.ScreenHeight = Integer.parseInt(env.get("LINES"));
@@ -405,25 +419,29 @@ public class VT100SSHClientHandler implements Command {
 
                 logger.info("Odebrano sekwencję " + Arrays.toString(intData));
 
+
                 if(keyInfo != null){
-                    logger.info("Odebrano klawisz "+keyInfo);
-                    uiManager.handleKeyboardInput(keyInfo);
+                    if(keyInfo.getLabel() == KeyLabel.INTERNAL_WIN_RESIZE) {
+                        try {
+                            Map<String, String> env = environment.getEnv();
+                            int height = Integer.parseInt(env.get("LINES"));
+                            int width = Integer.parseInt(env.get("COLUMNS"));
+                            if(width != ScreenWidth || height != ScreenHeight) {
+                                this.ScreenHeight = height;
+                                this.ScreenWidth = width;
+                                uiManager.resizeUI(this.ScreenWidth, this.ScreenHeight);
+                            }
+                        } catch (NumberFormatException e){
+                            logger.info(e.getLocalizedMessage());
+                        }
+                    }
+                    else {
+                        logger.info("Odebrano klawisz " + keyInfo);
+                        uiManager.handleKeyboardInput(keyInfo);
+                    }
                 }
                 else {
                     logger.warn("Nieznana sekwencja klawiszy " + Arrays.toString(intData));
-                }
-
-                try {
-                    Map<String, String> env = environment.getEnv();
-                    int height = Integer.parseInt(env.get("LINES"));
-                    int width = Integer.parseInt(env.get("COLUMNS"));
-                    if(width != ScreenWidth || height != ScreenHeight) {
-                        this.ScreenHeight = height;
-                        this.ScreenWidth = width;
-                        uiManager.resizeUI(this.ScreenWidth, this.ScreenHeight);
-                    }
-                } catch (NumberFormatException e){
-                    logger.info(e.getLocalizedMessage());
                 }
             }
         } catch (InterruptedException e){
