@@ -12,6 +12,9 @@ import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Klasa reprezentująca ekran aplikacji.
+ */
 public class TUIScreen {
 
     /**
@@ -110,11 +113,11 @@ public class TUIScreen {
 
 
     /**
-     * Adds a pixel to the layer with the specified z-index.
-     * @param x The x position of the pixel.
-     * @param y The y position of the pixel.
-     * @param zIndex The z-index of the layer.
-     * @param cell The cell to add.
+     * Dodaje komórkę do warstwy o określonym z-index.
+     * @param x Pozycja x komórki.
+     * @param y Pozycja y komórki.
+     * @param zIndex z-index docelowej warstwy.
+     * @param cell Komórka do dodania.
      */
     public void addPixelToLayer(int x, int y, int zIndex, ScreenCell cell) {
 //        logger.trace("Adding cell at ({}, {}) with z-index {}", x, y, zIndex);
@@ -128,7 +131,7 @@ public class TUIScreen {
     }
 
     /**
-     * Clears the screen.
+     * Czyści ekran.
      */
     public void clearScreen() {
         logger.trace("Clearing screen");
@@ -140,13 +143,13 @@ public class TUIScreen {
     }
 
     /**
-     * Sets the text at the specified position.
-     * @param x The x position of the text.
-     * @param y The y position of the text.
-     * @param text The text to set.
-     * @param textColor The text color.
-     * @param bgColor The background color.
-     * @param zIndex The z-index of the layer.
+     * Ustawia tekst w wybranym miejscu i z-index.
+     * @param x Pozycja x tekstu.
+     * @param y Pozycja y tekstu.
+     * @param text Tekst do wyświetlenia.
+     * @param textColor Kolor tekstu.
+     * @param bgColor kolor tła.
+     * @param zIndex z-index docelowej warstwy.
      */
     public void setText(int x, int y, String text, String textColor, String bgColor, int zIndex) {
         logger.trace("Setting text at ({}, {}) with z-index {}", x, y, zIndex);
@@ -164,9 +167,9 @@ public class TUIScreen {
     }
 
     /**
-     * Sets the text at the specified position.
-     * @param bgColor The color code.
-     * @param zIndex The z-index of the layer.
+     * Ustawia tło dla danej warstwy.
+     * @param bgColor Kod koloru.
+     * @param zIndex z-index docelowej warstwy.
      */
     public void setBgColor(String bgColor, int zIndex) {
         logger.trace("Setting background color with z-index {}", zIndex);
@@ -187,8 +190,8 @@ public class TUIScreen {
     }
 
     /**
-     * Renders the screen.
-     * @return The rendered screen.
+     * Renderuje ekran
+     * @return Wyrenderowany ekran.
      */
     private String render() {
         logger.trace("Rendering screen");
@@ -210,9 +213,9 @@ public class TUIScreen {
     }
 
     /**
-     * Refreshes the screen.
-     * @param out The output stream.
-     * @throws IOException If an I/O error occurs.
+     * Odświeża ekran.
+     * @param out Strumień, na który należy wysłać ekran po wyrenderowaniu.
+     * @throws IOException Jeśli nastąpi błąd I/O.
      */
     public void refresh(OutputStream out) throws IOException {
         mergeLayers();
@@ -222,11 +225,11 @@ public class TUIScreen {
     }
 
     /**
-     * Gets screen cell of the screen.
-     * @param x The x position of the pixel.
-     * @param y The y position of the pixel.
-     * @param zIndex The z-index of the layer.
-     * @return The pixel at the specified position.
+     * Zwraca komórkę z wybranej pozycji.
+     * @param x Pozycja x piksela.
+     * @param y pozycja y piksela.
+     * @param zIndex z-index warstwy, z której należy pobrać komórkę.
+     * @return Piksel na wybranej pozycji.
      */
     public ScreenCell getPixelFromLayer(int x, int y, int zIndex) {
         if (layers.containsKey(zIndex)) {

@@ -2,6 +2,9 @@ package pl.psk.termdemo.uimanager;
 
 import pl.psk.termdemo.model.color.ANSIColors;
 
+/**
+ * Klasa do tworzenia etykiet.
+ */
 public class UILabel implements UIComponent{
 
     private String text;
@@ -11,6 +14,16 @@ public class UILabel implements UIComponent{
 
     private UIManager screenManager;
 
+    /**
+     * Konstruktor z możliwością ustawienia koloru tekstu.
+     * @param text Tekst do wyświetlenia.
+     * @param x Pozycja x etykiety.
+     * @param y Pozycja y etykiety.
+     * @param zIndex z-index etykiety.
+     * @param textColor Kolor tekstu.
+     * @param bgColor Kolor tła.
+     * @param uiManager Obiekt <i>UIManager</i>
+     */
     public UILabel(String text, int x, int y, int zIndex, String textColor, String bgColor, UIManager uiManager){
         this.text = text;
         this.x = x;
@@ -21,6 +34,15 @@ public class UILabel implements UIComponent{
         this.screenManager = uiManager;
         countBounds();
     }
+    /**
+     * Konstruktor z domyślnym kolorem tekstu.
+     * @param text Tekst do wyświetlenia.
+     * @param x Pozycja x etykiety.
+     * @param y Pozycja y etykiety.
+     * @param zIndex z-index etykiety.
+     * @param bgColor Kolor tła.
+     * @param uiManager Obiekt <i>UIManager</i>
+     */
     public UILabel(String text, int x, int y, int zIndex, String bgColor,  UIManager uiManager){
         this.text = text;
         this.x = x;
@@ -31,6 +53,9 @@ public class UILabel implements UIComponent{
         countBounds();
     }
 
+    /**
+     * Liczy wymiary tekstu na ekranie z uwzględnieniem enterów.
+     */
     private void countBounds(){
         h = 1;
         int prevIndex = 0;
@@ -46,6 +71,11 @@ public class UILabel implements UIComponent{
         if(prevIndex == 0)
             w = text.length();
     }
+
+    /**
+     * Ustawia tekst etykiety.
+     * @param text Tekst do zmiany.
+     */
     public void setText(String text){
         this.text = text;
         countBounds();
