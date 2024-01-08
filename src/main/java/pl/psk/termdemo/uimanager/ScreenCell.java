@@ -3,32 +3,35 @@ package pl.psk.termdemo.uimanager;
 import lombok.Data;
 import lombok.NonNull;
 
+/**
+ * Klasa odpowiedzialna za pojedynczy <i>"piksel"</i> - komórkę ekranu.
+ */
 @Data
 public class ScreenCell {
     /**
-     * The character to be displayed in the cell.
+     * Znak wewnątrz komórki.
      */
     private char character;
 
     /**
-     * The text color of the character.
+     * Kolor tekstu.
      */
     @NonNull
     private String textColor;
 
     /**
-     * The background color of the cell.
+     * Kolor tła w komórce.
      */
     @NonNull
     private String bgColor;
 
     /**
-     * Sets the character, text color, and background color.
+     * Domyślny konstruktor. Zawiera znak, kolor tekstu i tła.
      *
-     * @param character The character to be displayed.
-     * @param textColor The text color of the character. Cannot be null.
-     * @param bgColor The background color of the cell. Cannot be null.
-     * @throws IllegalArgumentException if textColor or bgColor is null.
+     * @param character Znak, który ma zostać wyświetlony.
+     * @param textColor Kolor tekstu. Nie może być <i style="color: orange;">null</i>.
+     * @param bgColor Kolor tła w komórce. Nie może być <i style="color: orange;">null</i>.
+     * @throws IllegalArgumentException Jeśli przekazano null do <i>textColor</i> lub <i>bgColor</i>.
      */
     public ScreenCell(char character, @NonNull String textColor, @NonNull String bgColor) {
         this.character = character;

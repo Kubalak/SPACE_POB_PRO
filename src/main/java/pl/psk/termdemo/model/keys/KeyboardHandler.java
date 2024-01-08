@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Sprawdzić działanie z programami innymi niż PuTTY.
+/**
+ * Klasa mapująca <i>KeyInfo</i> na sekwencje bajtów.
+ */
 public class KeyboardHandler {
 
     // Logger for debugging and trace information
@@ -17,10 +19,16 @@ public class KeyboardHandler {
     // Map to hold key codes and corresponding KeyInfo
     private final Map<String, KeyInfo> keys = new HashMap<>();
 
+    /**
+     * Domyślny konstruktor. Wywołuje metodę initKeys();
+     */
     public KeyboardHandler() {
         initKeys();
     }
 
+    /**
+     * Metoda inicjująca mapę klawiszy.
+     */
     public void initKeys() {
         addKey(new KeyInfo(KeyLabel.CTRL_A), 1);
         addKey(new KeyInfo(KeyLabel.CTRL_C), 3);
@@ -205,20 +213,19 @@ public class KeyboardHandler {
     }
 
     /**
-     * Add a new key and its information to the map.
-     *
-     * @param info     KeyInfo object
-     * @param keyCodes Key codes
+     * Dodaje nowy klawisz i informacje o nim do mapy.
+     * @param info Obiekt KeyInfo.
+     * @param keyCodes Sekwencje bajtów reprezentujące dany klawisz.
      */
     private void addKey(KeyInfo info, int... keyCodes) {
         keys.put(arrayToKey(keyCodes), info);
     }
 
     /**
-     * Retrieve KeyInfo for given key codes.
+     * Pobiera obiekt <i>KeyInfo</i> dla danej sekwencji bajtów.
      *
-     * @param keyCodes Array of key codes
-     * @return KeyInfo object or null if not found
+     * @param keyCodes Tablica z sekwencją kodów dla klawisza.
+     * @return Obiekt <i>KeyInfo</i> z odpowiadającym klawiszem lub <i style="color:orange;">null</i> jeśli nie znaleziono.
      */
     public KeyInfo getKeyInfo(int[] keyCodes) {
         logger.trace("Searching for key: " + Arrays.toString(keyCodes));

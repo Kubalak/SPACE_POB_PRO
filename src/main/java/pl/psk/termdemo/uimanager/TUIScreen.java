@@ -14,28 +14,34 @@ import java.util.Map;
 
 public class TUIScreen {
 
+    /**
+     * Obiekt loggera.
+     */
     private static final Logger logger = LoggerFactory.getLogger(TUIScreen.class);
 
     /**
-     * The width and height of the screen.
+     * Szerokość ekranu.
      */
     private int width;
+    /**
+     * Wysokość ekranu.
+     */
     private int height;
 
     /**
-     * The layers of the screen.
+     * Warstwy.
      */
     private final Map<Integer, ScreenCell[][]> layers = new HashMap<>();
 
     /**
-     * The merged layer of the screen.
+     * Złączone warstwy do prezentacji.
      */
     private ScreenCell[][] mergedLayer;
 
     /**
-     * Creates a new screen with the specified width and height.
-     * @param width The width of the screen.
-     * @param height The height of the screen.
+     * Konstruktor ekranu.
+     * @param width Szerokość ekranu.
+     * @param height Wysokość ekranu.
      */
     public TUIScreen(int width, int height) {
         this.width = width;
@@ -46,7 +52,7 @@ public class TUIScreen {
 
 
     /**
-     * Merges all the layers into the merged layer.
+     * Łączy wszystkie warstwy ekranu do wyjściowej <i>mergedLayer</i>.
      */
     private void mergeLayers() {
         clearScreen();
@@ -77,10 +83,10 @@ public class TUIScreen {
     }
 
     /**
-     * Clears the cell at the specified position.
-     * @param x The x position of the cell.
-     * @param y The y position of the cell.
-     * @param zIndex The z-index of the cell.
+     * Czyści komórkę ekranu na wybranej pozycji.
+     * @param x Pozycja x komórki.
+     * @param y Pozycja y komórki.
+     * @param zIndex Parametr z-index komórki.
      */
     public void clearCellAt(int x, int y, int zIndex) {
         if(x >= width || y >= height || x < 0 || y < 0){
@@ -94,8 +100,8 @@ public class TUIScreen {
     }
 
     /**
-     * Adds a new layer to the screen.
-     * @param zIndex The z-index of the layer.
+     * Dodaje nową warstwę do ekranu.
+     * @param zIndex z-index warstwy.
      */
     public void addLayer(int zIndex) {
 //        logger.trace("Adding layer with z-index {}", zIndex);
@@ -229,6 +235,11 @@ public class TUIScreen {
         return null;
     }
 
+    /**
+     * Zmienia wymiary ekranu.
+     * @param width Nowa szerokość ekranu.
+     * @param height Nowa wysokość ekranu.
+     */
     public void resize(int width, int height){
         this.width = width;
         this.height = height;

@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Klasa obsługująca sesję SSH.
+ */
 public class VT100SSHClientHandler implements Command {
 
     private final Logger logger = LoggerFactory.getLogger(VT100SSHClientHandler.class);
@@ -49,10 +52,16 @@ public class VT100SSHClientHandler implements Command {
 
     private Thread receiverThread, senderThread;
 
+    /**
+     * Domyślny konstruktor. Inicjuje TUIScreen.
+     */
     public VT100SSHClientHandler() {
         tuiScreen = new TUIScreen(ScreenWidth, ScreenHeight);  // Inicjalizacja tutaj
     }
 
+    /**
+     * Inicjuje ekran - tworzy komponenty i ustawia je na odpowiednich pozycjach.
+     */
     public void init() {
         try {
             tuiScreen.addLayer(0);
@@ -325,24 +334,40 @@ public class VT100SSHClientHandler implements Command {
         logger.info("Received window size: " + width + "x" + height);
     }
 
+    /**
+     * Ustawia exitCallback.
+     * @param exitCallback Obiekt ExitCallback.
+     */
     @Override
     public void setExitCallback(ExitCallback exitCallback) {
         this.exitCallback = exitCallback;
 
     }
 
+    /**
+     * Ustawia strumień błędu.
+     * @param outputStream Strumień błędu.
+     */
     @Override
     public void setErrorStream(OutputStream outputStream) {
         this.errout = outputStream;
 
     }
 
+    /**
+     * Ustawia strumień wejściowy - z niego odczytywane są klawisze, które są naciskane.
+     * @param inputStream Strumień wejściowy.
+     */
     @Override
     public void setInputStream(InputStream inputStream) {
         this.in = inputStream;
 
     }
 
+    /**
+     * Ustawia strumień wyjściowy - to na niego wysyłane będę dane do wyświetlenia na ekranie.
+     * @param outputStream Strumień wyjściowy.
+     */
     @Override
     public void setOutputStream(OutputStream outputStream) {
         this.out = outputStream;
@@ -351,6 +376,12 @@ public class VT100SSHClientHandler implements Command {
 
     }
 
+    /**
+     * Uruchamia nową sesję użytkownika.
+     * @param channelSession Obiekt ChannelSession - sesja kanału.
+     * @param environment Środowisko - pozwala na odczytanie rozmiaru okna zdalnego i innych parametrów.
+     * @throws IOException W przypadku niepowodzenia.
+     */
     @Override
     public void start(ChannelSession channelSession, Environment environment) throws IOException {
         this.session = channelSession;
@@ -384,6 +415,11 @@ public class VT100SSHClientHandler implements Command {
         senderThread.start();
     }
 
+    /**
+     * Przerywa sesję użytkownika.
+     * @param channelSession Obiekt ChannelSession - nieużywany.
+     * @throws Exception W przypadku błędu w przerwaniu działania wątków.
+     */
     @Override
     public void destroy(ChannelSession channelSession) throws Exception {
         if(receiverThread != null)
@@ -448,46 +484,5 @@ public class VT100SSHClientHandler implements Command {
             logger.error(e.getLocalizedMessage());
         }
     }
-//    public void run() {
-//        try {
-//            byte[] buffer = new byte[1024];
-//            int bytesRead;
-//            List<Byte> byteList = new ArrayList<>();
-//            while ((bytesRead = in.read(buffer)) != -1) {
-//                for (int i = 0; i < bytesRead; i++) {
-//                    byteList.add(buffer[i]);
-//                }
-//                interpretReceivedData(byteList);
-//                byteList.clear();  // clear the list after interpreting the received data
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void interpretReceivedData(List<Byte> data) throws IOException {
-//        byte[] bytes = new byte[data.size()];
-//        for (int i = 0; i < data.size(); i++) {
-//            bytes[i] = data.get(i);
-//        }
-//        String received = new String(bytes, StandardCharsets.UTF_8);
-//
-//        logger.debug("Odebrano (bajty): " + data.size() + ", Dane: " + Arrays.toString(bytes));
-//
-//        int[] intData = new int[bytes.length];
-//        for (int i = 0; i < bytes.length; i++) {
-//            intData[i] = bytes[i] & 0xFF;
-//        }
-//        KeyInfo keyInfo = keyboardHandler.getKeyInfo(intData);
-//        if (keyInfo != null) {
-//            logger.debug("Odebrano klawisz: " + keyInfo.toString());
-//            uiManager.handleKeyboardInput(keyInfo);
-//        } else if (intData.length == 9) {
-//
-//            logger.warn("Nieznana sekwencja: " + Arrays.toString(intData));
-//        } else
-//            logger.warn("Nieznana sekwencja klawiszy: " + Arrays.toString(intData));
-//    }
-
 }
 

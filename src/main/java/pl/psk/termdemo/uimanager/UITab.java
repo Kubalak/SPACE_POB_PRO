@@ -8,7 +8,9 @@ import pl.psk.termdemo.model.keys.KeyInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Obsługa entera.
+/**
+ * Klasa implementująca karty w postaci TUI.
+ */
 public class UITab implements UIComponent {
 
     Logger logger = LoggerFactory.getLogger(UITab.class);
@@ -23,6 +25,16 @@ public class UITab implements UIComponent {
     private final UIManager uiManager;
     boolean active;
 
+    /**
+     * Domyślny konstruktor.
+     * @param title Tytuł karty, który będzie wyświetlany na liście kart.
+     * @param x Pozycja x karty (tytułu).
+     * @param y Pozycja y karty (tytułu)
+     * @param windowWidth Szerokość okna.
+     * @param windowHeight Wysokość okna.
+     * @param zIndex z-index.
+     * @param uiManager Obiekt UIManager, z którym współpracować będzie karta.
+     */
     public UITab(String title, int x, int y, int windowWidth, int windowHeight, int zIndex, UIManager uiManager) {
         this.x = x;
         this.y = y;
@@ -57,11 +69,19 @@ public class UITab implements UIComponent {
         }
     }
 
+    /**
+     * Pozwala na dodanie komponentu do karty.
+     * @param component Komponent. który ma zostać dodany.
+     */
     public void addComponent(UIComponent component) {
         logger.debug("Adding UI component " + component.getClass().getSimpleName());
         components.add(component);
     }
 
+    /**
+     * Pozwala na usunięcie komponentu z karty.
+     * @param component Komponent, który ma zostać usunięty.
+     */
     public void removeComponent(UIComponent component) {
         logger.debug("Removing UI component " + component.getClass().getSimpleName());
         components.remove(component);
@@ -150,6 +170,10 @@ public class UITab implements UIComponent {
         return true;
     }
 
+    /**
+     * Obsługuje klawiaturę.
+     * @param key Informacja o wciśniętym klawiszu.
+     */
     public void handleKeyboard(KeyInfo key) {
         switch (key.getLabel()) {
             case ARROW_DOWN:

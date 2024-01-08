@@ -17,11 +17,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Klasa implementująca serwer SSH.
+ */
 @Slf4j
 public class SSHServer {
 
     private static final SshServer sshd = SshServer.setUpDefaultServer();
 
+    /**
+     * Główna funkcja z serwerem SSH.
+     * @param args Argumenty uruchomieniowe programu.
+     */
     public static void main(String[] args) {
         try {
             startSshServer();
