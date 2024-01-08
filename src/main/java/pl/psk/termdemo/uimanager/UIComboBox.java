@@ -10,25 +10,38 @@ import pl.psk.termdemo.model.keys.KeyLabel;
 
 import java.util.List;
 
-
+/**
+ * Klasa implementująca ComboBox
+ */
 public class UIComboBox implements UIComponent, KeyboardInputHandler {
     Logger logger = LoggerFactory.getLogger(UIComboBox.class);
-
-    private List<String> items;
+    private final List<String> items;
     private int selectedIndex;
-    private int x, y, width, height;
+    private final int x;
+    private final int y;
+    private final int width;
+    private final int height;
     private String bgColor = ANSIColors.BG_BLUE.getCode();
-    private String textColor = ANSIColors.TEXT_WHITE.getCode();
-    private int zIndex;
+    private final String textColor = ANSIColors.TEXT_WHITE.getCode();
+    private final int zIndex;
     private boolean isActive;
-    private UIManager uiManager;
+    private final UIManager uiManager;
     @Getter
     private boolean isExpanded;
     private int highlightIndex;
     private int defaultIndex;
     private int selectedOption = 0;
 
-
+    /**
+     * Inicjalizacja comboboxa
+     * @param x - parametr określający położenie X obiektu
+     * @param y - parametr określający położenie y obiektu
+     * @param width - parametr określający szerokość obiektu
+     * @param height - parametr określający wysokość obiektu
+     * @param zIndex - parametr określający głębokość obiektu
+     * @param uiManager - obiekt, na którym rysowany jest obiekt combobox
+     * @param items - wartości comboboxa
+     */
     public UIComboBox(int x, int y, int width, int height, int zIndex, UIManager uiManager, List<String> items) {
         this.x = x;
         this.y = y;
@@ -39,6 +52,10 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         this.items = items;
         this.isExpanded = false;
     }
+
+    /**
+     * Rozwinięcie listy z wartościami
+     */
     public void toggleExpand() {
         isExpanded = !isExpanded;
         if (isExpanded) {
@@ -47,7 +64,9 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         uiManager.refresh();
     }
 
-
+    /**
+     * Wybranie wartości i jej przypisanie do zmiennej selectedIndex
+     */
     public void selectHighlighted() {
         if (isExpanded) {
             selectedIndex = highlightIndex;
@@ -139,6 +158,10 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         return isExpanded ? height + items.size() : height;
     }
 
+    /**
+     * Pobranie wartości wybranej przez combobox
+     * @return Aktualna wybrana wartość combobox
+     */
     public String getSelectedValue() {
         return items.get(selectedIndex);
     }
@@ -170,6 +193,9 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         return true;
     }
 
+    /**
+     * Potwierdzenie wybrania elementu (wartości)
+     */
     public void confirmSelection() {
         logger.info("Confirming selection");
         logger.info("Selected index: {}", items.get(selectedOption));
@@ -181,7 +207,10 @@ public class UIComboBox implements UIComponent, KeyboardInputHandler {
         uiManager.refresh();
     }
 
-
+    /**
+     * Nwaigacja po elementach
+     * @param direction - użyty klawisz do nawigacji
+     */
     public void navigateOption(KeyLabel direction) {
         if (isExpanded) {
             if (direction == KeyLabel.ARROW_UP) {
