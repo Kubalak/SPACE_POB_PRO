@@ -47,30 +47,33 @@ public class UITabela implements UIComponent {
     }
 
         public void drawAllHeaders(UITab uiTab) {
-            int xPosition = this.x;
+            int xPosition = this.x + 3;
+            System.out.println(this.newLabels);
             for (String label : this.newLabels) {
-                UILabel labelObject = new UILabel(label, xPosition, this.y, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-                xPosition += this.width / this.newLabels.size();
+                UILabel labelObject = new UILabel(label, xPosition, this.y -3 , 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+                xPosition += (this.width / this.newLabels.size()) + 3;
                 uiTab.addComponent(labelObject);
             }
         }
 
         public void drawAllRows(UITab uiTab) {
-            int startingY = this.y + 1;
+            int startingY = this.y - 2;
             int startingX = this.x;
             int count  = 1;
             int elementsPerRow = 3; // Ilość elementów w jednym rzędzie
             int totalElements = this.rowContents.size();
+            System.out.println(this.newLabels.size());
             for(String rowContent : this.rowContents) {
                 if (totalElements >= elementsPerRow && count > 1 && (count - 1) % elementsPerRow == 0) {
-                    startingY = startingY + this.height / (this.rowContents.size() / this.newLabels.size());
+//                    startingY = startingY + this.height / (this.rowContents.size() / 3);
+                    startingY = startingY + 3;
                     startingX = this.x;
                 }
-                UIBorder border = new UIBorder(startingX, startingY, this.width / this.newLabels.size(), this.height / (this.rowContents.size() / this.newLabels.size()), 0, uiManager, rowContent);
+                UIBorder border = new UIBorder(startingX, startingY, this.width / 3 + 2, 3 , 0, uiManager, rowContent);
                 count++;
                 border.setTextInBorder(uiTab);
                 border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
-                startingX += this.width / this.newLabels.size();
+                startingX += this.width / 3 + 2;
                 uiTab.addComponent(border);
             }
         }

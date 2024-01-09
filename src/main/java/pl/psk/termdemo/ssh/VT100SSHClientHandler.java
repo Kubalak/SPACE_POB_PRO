@@ -8,6 +8,7 @@ import org.apache.sshd.server.Signal;
 import org.apache.sshd.server.SignalListener;
 import org.apache.sshd.server.channel.ChannelSession;
 import org.apache.sshd.server.command.Command;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -22,17 +23,24 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Klasa obsługująca sesję SSH.
  */
+
+
 public class VT100SSHClientHandler implements Command {
+
+
+    public static double withMathRound(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(VT100SSHClientHandler.class);
 
@@ -67,12 +75,14 @@ public class VT100SSHClientHandler implements Command {
             tuiScreen.addLayer(0);
             tuiScreen.addLayer(1);
             tuiScreen.addLayer(2);
+            tuiScreen.addLayer(3);
             tuiScreen.setBgColor(ANSIColors.BG_BRIGHT_BLACK.getCode(), 0);
             UITab tab1 = new UITab("Algo 5", 0, 0, ScreenWidth, ScreenHeight, 0, uiManager);
             UITab tab3 = new UITab("Algo 3", 20, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+            UITab tab5 = new UITab("Algo 4", 30, 0, ScreenWidth, ScreenHeight, 0, uiManager);
 
             //tab do list
-            UITab tab4 = new UITab("List view", 40, 0, ScreenWidth, ScreenHeight, 0, uiManager);
+//            UITab tab4 = new UITab("List view", 60, 0, ScreenWidth, ScreenHeight, 0, uiManager);
 
             UIBorder border = new UIBorder(1, 1, ScreenWidth - 1, ScreenHeight - 1, 0, uiManager);
             border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
@@ -83,31 +93,42 @@ public class VT100SSHClientHandler implements Command {
             UILabel label = new UILabel("Press arrow down to activate next field, and input planet name.", 3, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField planetInput = new UITextField(3, 3, 15, 1, 0, uiManager);
             UILabel weightLabel = new UILabel("Press arrow down again to activate next component - numeric input", 3, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel weightLabel2 = new UILabel("testowy", 3, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UITextField weightInput = new UITextField(3, 5, 15, 1, 0, uiManager);
             weightInput.setNumeric(true);
 
 
-            List<String> rowContents = new ArrayList<>();
-            rowContents.add("1");
-            rowContents.add("test");
-            rowContents.add("373");
-            rowContents.add("2");
-            rowContents.add("testdwa");
-            rowContents.add("2773");
+            //algo4
 
-            List<String> newLabes = new ArrayList<>();
-            newLabes.add("ID");
-            newLabes.add("Nazwa");
-            newLabes.add("Wynik");
+            //tworzenie inputow do danych
+            UILabel initPos1Label = new UILabel("Init position 1", 3, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel initPos2Label = new UILabel("Init position 2", 3, 5, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel initPost3Label = new UILabel("Init position 3", 3, 8, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel initVel1Label = new UILabel("Init velocity 1", 3, 11, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel initVel2Label = new UILabel("Init velocity 2", 3, 14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel initVel3Label = new UILabel("Init velocity 3", 3, 17, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel timeStepsLabel = new UILabel("Timesteps", 3, 20, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel startTimeLabel = new UILabel("Start time.", 3, 23, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel timeDeltaMinutesLabel = new UILabel("Time delta minutes", 3, 26, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UITextField initPos1 = new UITextField(3, 3, 15, 1, 0, uiManager);
+            UITextField initPos2 = new UITextField(3, 6, 15, 1, 0, uiManager);
+            UITextField initPos3 = new UITextField(3, 9, 15, 1, 0, uiManager);
+            UITextField initVel1 = new UITextField(3, 12, 15, 1, 0, uiManager);
+            UITextField initVel2 = new UITextField(3, 15, 15, 1, 0, uiManager);
+            UITextField initVel3 = new UITextField(3, 18, 15, 1, 0, uiManager);
+            UITextField timeSteps = new UITextField(3, 21, 15, 1, 0, uiManager);
+            UITextField startTime = new UITextField(3, 24, 15, 1, 0, uiManager);
+            UITextField timeDeltaMinutes = new UITextField(3, 27, 15, 1, 0, uiManager);
+            initPos1.setNumeric(true);
+            initPos2.setNumeric(true);
+            initPos3.setNumeric(true);
+            initVel1.setNumeric(true);
+            initVel2.setNumeric(true);
+            initVel3.setNumeric(true);
+            timeSteps.setNumeric(true);
+            timeDeltaMinutes.setNumeric(true);
 
-            //tabela dajemy x i y, width i height, index , managera i labelki i wiersze
-            UITabela tabelaFinal = new UITabela(5, 5, 30, 10, 0, uiManager, newLabes, rowContents);
 
-            //tu sie rysuje
-//            tabelaFinal.drawAllHeaders(tab3);
-//            tabelaFinal.drawAllRows(tab3);
-
-            //koniec tabela
             UILabel infoLabel = new UILabel("Use CTRL + ARROW_RIGHT to move to next tab.", 2, 28, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
 
@@ -268,20 +289,126 @@ public class VT100SSHClientHandler implements Command {
                     uiManager
             );
 
+            // ALGO 4
+            UIButton algo4Button = new UIButton(
+                    30, 5, 15, 5, 0, "Calculate algo4",
+                    () -> {
+                        try {
+
+
+                            // pobranie danych z inputow
+                            Integer timeStepsInt = (int) timeSteps.getNumber();
+                            String startTimeString = startTime.getText();
+                            Integer timeDeltaMinutesDouble = (int) timeDeltaMinutes.getNumber();
+
+                            Double[] initialPositionsArray = new Double[3];
+                            initialPositionsArray[0] = initPos1.getNumber();
+                            initialPositionsArray[1] = initPos2.getNumber();
+                            initialPositionsArray[2] = initPos3.getNumber();
+
+
+                            Double[] initialVelocityArray = new Double[3];
+                            initialVelocityArray[0] = initVel1.getNumber();
+                            initialVelocityArray[1] = initVel2.getNumber();
+                            initialVelocityArray[2] = initVel3.getNumber();
+
+
+                            //tworzenie obiektu json i populowanie go danymi
+                            JSONObject requestData = new JSONObject();
+                            requestData.put("initial_position", initialPositionsArray);
+                            requestData.put("initial_velocity", initialVelocityArray);
+                            requestData.put("time_steps", timeStepsInt);
+                            requestData.put("start_time", startTimeString);
+                            requestData.put("time_delta_minutes", timeDeltaMinutesDouble);
+
+
+                            //tworzenie polaczenie i wyslanie jsona na serwer
+                            URL url = new URL("http://127.0.0.1:5000/predict_orbit");
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setRequestMethod("POST");
+                            connection.setRequestProperty("Content-Type", "application/json");
+                            connection.setDoOutput(true);
+
+                            OutputStream os = connection.getOutputStream();
+                            os.write(requestData.toString().getBytes(StandardCharsets.UTF_8));
+                            os.flush();
+                            os.close();
+
+                            //tworzenie response i populowanie go
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            StringBuilder response = new StringBuilder();
+                            String inputLine;
+                            while ((inputLine = in.readLine()) != null) {
+                                response.append(inputLine);
+                            }
+                            in.close();
+
+                            JSONObject jsonResponse = new JSONObject(response.toString());
+                            JSONArray orbitPositions = jsonResponse.getJSONArray("orbit_positions");
+
+                            // liczba obiektow odebranych z response
+                            int DATA_COUNT_FROM_RESPONSE = 7;
+
+                            //lista wierszy
+                            List<String> rowContents2 = new ArrayList<>();
+
+                            //tworzenie wierszy i dodawanie na ekran odpowiednimi danymi
+                            for (int i = 0; i < DATA_COUNT_FROM_RESPONSE; i++) {
+                                JSONArray innerArray = orbitPositions.getJSONArray(i);
+                                for (int j = 0; j < innerArray.length(); j++) {
+                                    double value = innerArray.getDouble(j);
+
+                                    String test = String.valueOf(value);
+                                    String replacedText = test.replace(",", ".");
+                                    String trimmedNumber = "";
+                                    int dotIndex = replacedText.indexOf('.');
+                                        if (dotIndex != -1) {
+                                            int decimalPlaces = replacedText.length() - dotIndex - 1;
+                                            if(decimalPlaces < 3) {
+                                                trimmedNumber = replacedText;
+                                            } else {
+                                                trimmedNumber = replacedText.substring(0, dotIndex + 3);
+                                            }
+                                        }
+                                    rowContents2.add(trimmedNumber);
+                                }
+                            }
+
+
+                            UILabel tabelLabel = new UILabel("Orbit predictions", 80, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+
+                            List<String> newLabes2 = new ArrayList<>();
+                            newLabes2.add("X1");
+                            newLabes2.add("X2");
+                            newLabes2.add("X3");
+
+                            UITabela tabelaFinal2 = new UITabela(70, 7, 30, 10, 0, uiManager, newLabes2, rowContents2);
+
+                            tabelaFinal2.drawAllHeaders(tab5);
+                            tabelaFinal2.drawAllRows(tab5);
+
+                            tab5.addComponent(tabelaFinal2);
+                            tab5.addComponent(tabelLabel);
+
+
+
+                        } catch (Exception e) {
+                            // Handle other types of exceptions
+                            // Log the exception or perform error handling as needed
+                            e.printStackTrace(); // Print the stack trace for debugging purposes
+                        }
+                    },
+                    uiManager
+            );
+
+
             tab1.addComponent(border);
             tab1.addComponent(title);
-           //tab1.addComponent(label);
-            //tab1.addComponent(field);
-            //tab1.addComponent(passLabel);
-            //tab1.addComponent(passField);
             tab1.addComponent(infoLabel);
             tab1.addComponent(infoLabel2);
             tab1.addComponent(apiButton);
             tab1.addComponent(comboBox);
 
-            //tab2.addComponent(tab2label);
-            //tab2.addComponent(infoLabel2);
-            //tab2.addComponent(window);
             tab2.addComponent(infoLabel);
             tab2.addComponent(infoLabel2);
             tab2.addComponent(border);
@@ -290,7 +417,6 @@ public class VT100SSHClientHandler implements Command {
             tab2.addComponent(distanceButton);
 
 
-//            tab2.addComponent(uiComboBox);
             tab3.addComponent(infoLabel);
             tab3.addComponent(infoLabel2);
             tab3.addComponent(border);
@@ -299,7 +425,29 @@ public class VT100SSHClientHandler implements Command {
             tab3.addComponent(weightLabel);
             tab3.addComponent(weightInput);
             tab3.addComponent(weightButton);
-//            tab3.addComponent(tabelaFinal);
+
+
+            //tabela z algo4
+            tab5.addComponent(border);
+            tab5.addComponent(initPos1Label);
+            tab5.addComponent(initPos1);
+            tab5.addComponent(initPos2Label);
+            tab5.addComponent(initPos2);
+            tab5.addComponent(initPost3Label);
+            tab5.addComponent(initPos3);
+            tab5.addComponent(initVel1Label);
+            tab5.addComponent(initVel1);
+            tab5.addComponent(initVel2Label);
+            tab5.addComponent(initVel2);
+            tab5.addComponent(initVel3Label);
+            tab5.addComponent(initVel3);
+            tab5.addComponent(timeStepsLabel);
+            tab5.addComponent(timeSteps);
+            tab5.addComponent(startTimeLabel);
+            tab5.addComponent(startTime);
+            tab5.addComponent(timeDeltaMinutesLabel);
+            tab5.addComponent(timeDeltaMinutes);
+            tab5.addComponent(algo4Button);
 
             //Proba listy
             List<String> listComponents = new ArrayList<>();
@@ -309,13 +457,14 @@ public class VT100SSHClientHandler implements Command {
 
             UIList listInTabElement = new UIList(5, 5, 0, uiManager, listComponents);
             listInTabElement.setListElementsMargin(3);
-            listInTabElement.drawList(tab4);
+//            listInTabElement.drawList(tab4);
 
             uiManager.addTab(tab1);
             uiManager.addTab(tab2);
 
             uiManager.addTab(tab3);
-            uiManager.addTab(tab4);
+//            uiManager.addTab(tab4);
+            uiManager.addTab(tab5);
 
             uiManager.initialize();
         } catch (Exception e) {
