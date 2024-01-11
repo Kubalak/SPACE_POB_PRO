@@ -163,6 +163,7 @@ public class UIManager {
     private void moveToNextTab() {
         if (!tabs.isEmpty()) {
             tabs.get(currentTab).setActive(false);
+            screen.clearLayers();
             currentTab = (currentTab + 1) % tabs.size();
             tabs.get(currentTab).setActive(true);
         }
@@ -175,6 +176,7 @@ public class UIManager {
     private void moveToPrevTab() {
         if (!tabs.isEmpty()) {
             tabs.get(currentTab).setActive(false);
+            screen.clearLayers();
             currentTab -= 1;
             if (currentTab < 0) currentTab = tabs.size() - 1;
             tabs.get(currentTab).setActive(true);

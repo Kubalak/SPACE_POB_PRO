@@ -225,6 +225,21 @@ public class TUIScreen {
     }
 
     /**
+     * Czyści wszystkie warstwy.<br/>
+     * Używać tylko jednorazowo - w przeciwnym wypadku ekran będzie pusty.
+     */
+    public void clearLayers(){
+        for(Integer zIndex : layers.keySet()){
+            ScreenCell[][] layer = layers.get(zIndex);
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    layer[i][j] = null;
+                }
+            }
+        }
+    }
+
+    /**
      * Zwraca komórkę z wybranej pozycji.
      * @param x Pozycja x piksela.
      * @param y pozycja y piksela.
