@@ -80,6 +80,11 @@ public class UILabel implements UIComponent{
         this.text = text;
         countBounds();
     }
+
+    public String getText() {
+        return text;
+    }
+
     @Override
     public void draw(UIManager uiManager) {
         TUIScreen screen = uiManager.getScreen();

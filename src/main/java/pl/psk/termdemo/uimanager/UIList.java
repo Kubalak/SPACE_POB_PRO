@@ -32,7 +32,7 @@ public class UIList implements UIComponent {
     /**
      * Zmienna string odpowiadająca za kolor tekstu.
      */
-    private String textColor = ANSIColors.TEXT_WHITE.getCode();
+    private String textColor = ANSIColors.TEXT_BRIGHT_GREEN.getCode();
 
     /**
      * Zmienna zIndex
