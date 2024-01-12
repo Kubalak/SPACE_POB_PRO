@@ -72,7 +72,7 @@ public class UITabela implements UIComponent {
                 UIBorder border = new UIBorder(startingX, startingY, this.width / 3 + 2, 3 , 0, uiManager, rowContent);
                 count++;
                 border.setTextInBorder(uiTab);
-                border.setTextColor(ANSIColors.TEXT_BRIGHT_GREEN.getCode());
+                border.setTextColor(ANSIColors.TEXT_WHITE.getCode());
                 border.setBgColor(ANSIColors.BG_BRIGHT_BLUE.getCode());
                 startingX += this.width / 3 + 2;
                 uiTab.addComponent(border);

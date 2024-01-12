@@ -101,8 +101,8 @@ public class VT100SSHClientHandler implements Command {
             UILabel infoLabel2 = new UILabel("Press arrow down again to activate next component - numeric input", 3, 4, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel infoLabel3 = new UILabel("Press enter to dropdown combo box", 2, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel tabelLabel = new UILabel("Orbit predictions", 80, 2, 0,ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel velocitiesLabel = new UILabel("", 20, 4, 0, ANSIColors.TEXT_BRIGHT_GREEN.getCode(), ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel distancesLabel = new UILabel("", 3, 7, 0, ANSIColors.TEXT_BRIGHT_GREEN.getCode(), ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel velocitiesLabel = new UILabel("", 20, 4, 0, "\033[38;5;209m", ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel distancesLabel = new UILabel("", 3, 7, 0, "\033[38;5;209m", ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
             UILabel initPos1Label = new UILabel("Init position 1", 3, 2, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel initPos2Label = new UILabel("Init position 2", 3, 5, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
@@ -121,8 +121,8 @@ public class VT100SSHClientHandler implements Command {
             UILabel dateLabel2 = new UILabel("Input date in format YYYY-MM-DD", 3, 11, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel latLabel = new UILabel("Input latitude example: 50.874167,", 3, 14, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
             UILabel lonLabel = new UILabel("Input latitude example: 20.633333,", 3, 17, 0, ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel lunarPhaseLabel = new UILabel("", 3, 8, 0, ANSIColors.TEXT_BRIGHT_GREEN.getCode(), ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
-            UILabel dayNightLabel = new UILabel("", 3, 22, 0, ANSIColors.TEXT_BRIGHT_GREEN.getCode(), ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel lunarPhaseLabel = new UILabel("", 3, 8, 0, "\033[38;5;209m", ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
+            UILabel dayNightLabel = new UILabel("", 3, 22, 0, "\033[38;5;209m", ANSIColors.BG_BRIGHT_BLUE.getCode(), uiManager);
 
             //tworzenie inputow do danych
             UITextField planetInput1 = new UITextField(3, 3, 15, 1, 0, uiManager);
