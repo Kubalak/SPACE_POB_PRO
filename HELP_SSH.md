@@ -23,3 +23,6 @@ Linux<br/>
 - wpisać polecenie `ssh -l admin localhost`
 - w przypadku użycia portu innego niż domyślny można podać polecenie `ssh -l admin localhost -p `<i>`<port>`</i>
 - zalogować się do serwera analogicznie jak w przypadku systemu Windows
+
+# Dokumentacja
+Dokumentacja dostępna jest w folderze [doc](doc/index.html)

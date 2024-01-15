@@ -693,14 +693,25 @@ public class VT100SSHClientHandler implements Command {
     /**
      * Przerywa sesję użytkownika.
      * @param channelSession Obiekt ChannelSession - nieużywany.
-     * @throws Exception W przypadku błędu w przerwaniu działania wątków.
      */
     @Override
-    public void destroy(ChannelSession channelSession) throws Exception {
-        if(receiverThread != null)
-            receiverThread.interrupt();
-        if(senderThread != null)
-            senderThread.interrupt();
+    public void destroy(ChannelSession channelSession) {
+        try {
+            if (receiverThread != null && receiverThread.isAlive())
+                receiverThread.interrupt();
+            if (senderThread != null && senderThread.isAlive())
+                senderThread.interrupt();
+
+
+        } catch (Exception e){
+            logger.error("An exception occured while destroying session " + e.getMessage());
+        }
+        finally {
+            if (exitCallback != null)
+                exitCallback.onExit(0);
+            logger.info("Client disconnected due to CTRL + C");
+        }
+
     }
 
     private void receiver(){
@@ -712,10 +723,15 @@ public class VT100SSHClientHandler implements Command {
                 System.arraycopy(buf, 0, tmp, 0, bytesread);
                 messages.put(tmp);
             }
-        } catch (Exception e){
+        } catch (InterruptedException ignored){
+            logger.info("Receiver interrupted");
+        }
+        catch (Exception e){
             logger.error(e.getMessage() + e.getLocalizedMessage());
         }
-        logger.info("Receiver thread finished!");
+        finally {
+            logger.info("Receiver thread finished!");
+        }
     }
 
     private void interpreter(){
@@ -746,9 +762,10 @@ public class VT100SSHClientHandler implements Command {
                         } catch (NumberFormatException e){
                             logger.info(e.getLocalizedMessage());
                         }
-//                    } else if (Arrays.stream(intData).anyMatch("3"::equals) == true) {
-//                        logger.info("Wykryto CTRL+C czyli koniec sesji");
-//
+                    } else if (keyInfo.getLabel() == KeyLabel.CTRL_C) {
+                        logger.info("Destroying session");
+                        destroy(session);
+                        break;
                     } else {
                         logger.info("Odebrano klawisz " + keyInfo);
                         uiManager.handleKeyboardInput(keyInfo);
@@ -760,9 +777,10 @@ public class VT100SSHClientHandler implements Command {
                 }
             }
         } catch (InterruptedException e){
-            logger.error(e.getLocalizedMessage());
+            logger.info("Sender thread finished!");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            destroy(session);
         }
     }
 }
