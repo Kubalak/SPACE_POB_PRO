@@ -429,7 +429,7 @@ public class VT100SSHClientHandler implements Command {
                             }
 
 
-                            UITabela tabelaFinal2 = new UITabela(70, 7, 30, 10, 0, uiManager, newLabels2, rowContents2);
+                            UITabela tabelaFinal2 = new UITabela(70, 7, 30, 3,  uiManager, newLabels2, rowContents2);
 
                             tabelaFinal2.drawAllHeaders(tab4);
                             tabelaFinal2.drawAllRows(tab4);
