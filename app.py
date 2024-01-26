@@ -168,7 +168,7 @@ def calculate_weight():
     if planet not in GRAVITY:
         return jsonify({'error': 'Invalid planet'}), 400
     earth_weight = weight_on_earth * GRAVITY['EARTH']
-    weight_on_planet = earth_weight / GRAVITY[planet]
+    weight_on_planet = (weight_on_earth / GRAVITY['EARTH']) * GRAVITY[planet]
     return jsonify({'weight_on_planet': round(weight_on_planet, 5)})
 
 # ALGORYTM 1
